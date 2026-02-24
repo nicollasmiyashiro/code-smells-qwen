@@ -107,56 +107,93 @@
             <span class="section-title-icon">❌</span>
             Código RUIM
           </h2>
+          
           <div class="code-container">
             <div class="code-header">
-              <span class="code-label bad">❌ Java - Código Morto</span>
+              <span class="code-label bad">❌ Java</span>
               <button class="code-copy-btn">Copiar</button>
             </div>
             <pre><code class="language-java">public class ProcessadorPagamento {
-    
+
     // Variável nunca usada
     private static final String VERSAO = "2.0";
     private double taxaProcessamento = 0.029;
-    
+
     // Método antigo - não remover, pode ser útil depois
     /*
     public double calcularTaxaAntiga(double valor) {
         return valor * 0.035;
     }
     */
-    
+
     // Método privado nunca chamado
     private void logProcessamento(String mensagem) {
         System.out.println("[LOG] " + mensagem);
     }
-    
+
     // Parâmetro não usado
     public boolean processar(double valor, String moeda) {
         // moeda não é usada
         if (valor <= 0) {
             return false;
         }
-        
+
         double taxa = taxaProcessamento;
-        
+
         // Código inalcançável
         return valor * taxa > 0;
         System.out.println("Processado"); // Nunca executado
     }
-    
+
     // Método público nunca chamado externamente
     public void metodoLegado() {
         // Foi usado apenas em testes antigos
         System.out.println("Legado");
     }
-    
-    // Getter para campo não usado
-    public double getTaxaProcessamento() {
-        return taxaProcessamento;
+}</code></pre>
+          </div>
+
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ C#</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-csharp">public class ProcessadorPagamento {
+
+    // Variável nunca usada
+    private const string VERSAO = "2.0";
+    private double taxaProcessamento = 0.029;
+
+    // Método antigo - não remover, pode ser útil depois
+    /*
+    public double CalcularTaxaAntiga(double valor) {
+        return valor * 0.035;
     }
-    
-    public void setTaxaProcessamento(double taxa) {
-        this.taxaProcessamento = taxa;
+    */
+
+    // Método privado nunca chamado
+    private void LogProcessamento(string mensagem) {
+        Console.WriteLine("[LOG] " + mensagem);
+    }
+
+    // Parâmetro não usado
+    public bool Processar(double valor, string moeda) {
+        // moeda não é usada
+        if (valor <= 0) {
+            return false;
+        }
+
+        double taxa = taxaProcessamento;
+
+        // Código inalcançável
+        return valor * taxa > 0;
+        Console.WriteLine("Processado"); // Nunca executado
+    }
+
+    // Método público nunca chamado externamente
+    public void MetodoLegado() {
+        // Foi usado apenas em testes antigos
+        Console.WriteLine("Legado");
     }
 }</code></pre>
           </div>
@@ -167,25 +204,42 @@
             <span class="section-title-icon">✅</span>
             Código BOM
           </h2>
+          
           <div class="code-container">
             <div class="code-header">
-              <span class="code-label good">✅ Java - Código Limpo</span>
+              <span class="code-label good">✅ Java</span>
               <button class="code-copy-btn">Copiar</button>
             </div>
             <pre><code class="language-java">public class ProcessadorPagamento {
-    
+
     private double taxaProcessamento = 0.029;
-    
+
     public boolean processar(double valor) {
         if (valor <= 0) {
             return false;
         }
-        
+
         return valor * taxaProcessamento > 0;
     }
-    
-    // Se precisar de log no futuro, implemente adequadamente
-    // Se precisar de suporte a múltiplas moedas, adicione como nova feature
+}</code></pre>
+          </div>
+
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ C#</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-csharp">public class ProcessadorPagamento {
+
+    private double taxaProcessamento = 0.029;
+
+    public bool Processar(double valor) {
+        if (valor <= 0) {
+            return false;
+        }
+
+        return valor * taxaProcessamento > 0;
+    }
 }</code></pre>
           </div>
         </section>
@@ -233,50 +287,72 @@
             Diagrama Ilustrativo
           </h2>
           <div class="diagram-container">
-            <svg class="diagram-svg" viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
-              <!-- Antes -->
-              <text x="150" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#ef4444">ANTES</text>
-              
-              <rect x="50" y="50" width="200" height="120" fill="#ef4444" opacity="0.1" rx="8"/>
-              <rect x="50" y="50" width="200" height="120" stroke="#ef4444" stroke-width="2" fill="none" rx="8"/>
-              
-              <rect x="70" y="70" width="160" height="20" fill="#ef4444" opacity="0.3" rx="4"/>
-              <text x="150" y="84" text-anchor="middle" font-size="9" fill="#ef4444">método não usado</text>
-              
-              <rect x="70" y="95" width="160" height="20" fill="#ef4444" opacity="0.3" rx="4"/>
-              <text x="150" y="109" text-anchor="middle" font-size="9" fill="#ef4444">variável não lida</text>
-              
-              <rect x="70" y="120" width="160" height="20" fill="#ef4444" opacity="0.3" rx="4"/>
-              <text x="150" y="134" text-anchor="middle" font-size="9" fill="#ef4444">código comentado</text>
-              
-              <rect x="70" y="145" width="160" height="20" fill="#22c55e" opacity="0.3" rx="4"/>
-              <text x="150" y="159" text-anchor="middle" font-size="9" fill="#22c55e">código útil</text>
-              
-              <!-- Seta -->
-              <line x1="260" y1="110" x2="300" y2="110" stroke="#f97316" stroke-width="2" marker-end="url(#arrowhead8)"/>
-              
-              <!-- Depois -->
-              <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#22c55e">DEPOIS</text>
-              
-              <rect x="350" y="70" width="200" height="60" fill="#22c55e" opacity="0.1" rx="8"/>
-              <rect x="350" y="70" width="200" height="60" stroke="#22c55e" stroke-width="2" fill="none" rx="8"/>
-              
-              <rect x="370" y="90" width="160" height="30" fill="#22c55e" opacity="0.3" rx="4"/>
-              <text x="450" y="110" text-anchor="middle" font-size="10" fill="#22c55e">apenas código útil</text>
-              
-              <!-- Ícones de lixo -->
-              <text x="280" y="80" font-size="20">🗑️</text>
-              <text x="280" y="105" font-size="20">🗑️</text>
-              <text x="280" y="130" font-size="20">🗑️</text>
-              
+            <svg class="diagram-svg" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+              <!-- Definições -->
               <defs>
-                <marker id="arrowhead8" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                  <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+                <marker id="arrowhead" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+                  <polygon points="0 0, 12 4, 0 8" fill="#f97316"/>
                 </marker>
+                <linearGradient id="gradRed" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#fee2e2;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#fecaca;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="gradGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#d1fae5;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#a7f3d0;stop-opacity:1" />
+                </linearGradient>
               </defs>
+
+              <!-- ANTES -->
+              <text x="175" y="28" text-anchor="middle" font-size="16" font-weight="bold" class="diagram-label" fill="#dc2626">ANTES</text>
+
+              <rect x="20" y="45" width="310" height="160" fill="url(#gradRed)" stroke="#ef4444" stroke-width="2" rx="12"/>
+              <text x="175" y="70" text-anchor="middle" font-size="13" font-weight="600" fill="#991b1b">ProcessadorPagamento</text>
+
+              <!-- Dead Code Items -->
+              <rect x="40" y="85" width="270" height="28" fill="#ffffff" stroke="#ef4444" stroke-width="1.5" rx="6"/>
+              <text x="175" y="104" text-anchor="middle" font-size="11" fill="#dc2626">🗑️ Variável não usada (VERSAO)</text>
+
+              <rect x="40" y="118" width="270" height="28" fill="#ffffff" stroke="#ef4444" stroke-width="1.5" rx="6"/>
+              <text x="175" y="137" text-anchor="middle" font-size="11" fill="#dc2626">🗑️ Método nunca chamado (log)</text>
+
+              <rect x="40" y="151" width="270" height="28" fill="#ffffff" stroke="#ef4444" stroke-width="1.5" rx="6"/>
+              <text x="175" y="170" text-anchor="middle" font-size="11" fill="#dc2626">🗑️ Código comentado/antigo</text>
+
+              <rect x="40" y="184" width="270" height="14" fill="#ffffff" stroke="#ef4444" stroke-width="1.5" rx="6"/>
+              <text x="175" y="194" text-anchor="middle" font-size="10" fill="#dc2626">🗑️ Código inalcançável</text>
+
+              <!-- Seta -->
+              <line x1="340" y1="125" x2="380" y2="125" stroke="#f97316" stroke-width="3" marker-end="url(#arrowhead)"/>
+              <text x="360" y="115" text-anchor="middle" font-size="12" fill="#f97316" font-weight="bold">Refatorar</text>
+
+              <!-- DEPOIS -->
+              <text x="545" y="28" text-anchor="middle" font-size="16" font-weight="bold" class="diagram-label" fill="#16a34a">DEPOIS</text>
+
+              <rect x="390" y="45" width="290" height="160" fill="url(#gradGreen)" stroke="#22c55e" stroke-width="2" rx="12"/>
+              <text x="535" y="70" text-anchor="middle" font-size="13" font-weight="600" fill="#166534">ProcessadorPagamento</text>
+
+              <!-- Clean Code Items -->
+              <rect x="410" y="85" width="250" height="35" fill="#ffffff" stroke="#22c55e" stroke-width="2" rx="8"/>
+              <text x="535" y="100" text-anchor="middle" font-size="11" font-weight="600" fill="#16a34a">✓ taxaProcessamento</text>
+              <text x="535" y="115" text-anchor="middle" font-size="10" fill="#15803d">campo necessário</text>
+
+              <rect x="410" y="128" width="250" height="35" fill="#ffffff" stroke="#22c55e" stroke-width="2" rx="8"/>
+              <text x="535" y="143" text-anchor="middle" font-size="11" font-weight="600" fill="#16a34a">✓ processar(valor)</text>
+              <text x="535" y="158" text-anchor="middle" font-size="10" fill="#15803d">método essencial</text>
+
+              <!-- Legenda -->
+              <rect x="20" y="225" width="660" height="80" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5" rx="8"/>
+              <text x="350" y="248" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">Benefícios da Remoção de Dead Code</text>
+
+              <text x="100" y="275" text-anchor="start" font-size="11" fill="#475569">✓ Código mais limpo e legível</text>
+              <text x="400" y="275" text-anchor="start" font-size="11" fill="#475569">✓ Menos confusão para desenvolvedores</text>
+
+              <text x="100" y="295" text-anchor="start" font-size="11" fill="#475569">✓ Build mais rápido</text>
+              <text x="400" y="295" text-anchor="start" font-size="11" fill="#475569">✓ Menos código para manter</text>
             </svg>
-            <p class="mt-2" style="color: var(--text-secondary); font-size: var(--text-sm);">
-                Código morto é removido, mantendo apenas o necessário
+            <p class="mt-2" style="color: var(--text-secondary); font-size: var(--text-sm); text-align: center;">
+                Código morto é removido, mantendo apenas o código necessário e funcional
             </p>
           </div>
         </section>

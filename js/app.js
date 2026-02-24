@@ -440,31 +440,90 @@
   const Breadcrumb = {
     init() {
       const breadcrumb = document.querySelector('.breadcrumb');
+      const headerBreadcrumb = document.querySelector('.header-breadcrumb-content');
+      const header = document.querySelector('.header');
       if (!breadcrumb) return;
+
+      // Mapeamento de smells PT-BR → EN
+      const smellNames = {
+        'long-function': { pt: 'Funções Longas', en: 'Long Function' },
+        'many-arguments': { pt: 'Muitos Argumentos', en: 'Many Arguments' },
+        'switch-statements': { pt: 'Switch Statements', en: 'Switch Statements' },
+        'data-clumps': { pt: 'Data Clumps', en: 'Data Clumps' },
+        'primitive-obsession': { pt: 'Primitive Obsession', en: 'Primitive Obsession' },
+        'feature-envy': { pt: 'Feature Envy', en: 'Feature Envy' },
+        'large-class': { pt: 'Classe Grande', en: 'Large Class' },
+        'divergent-change': { pt: 'Mudança Divergente', en: 'Divergent Change' },
+        'scattered-data': { pt: 'Dados Espalhados', en: 'Scattered Data' },
+        'shotgun-surgery': { pt: 'Cirurgia de Escopeta', en: 'Shotgun Surgery' },
+        'parallel-inheritance': { pt: 'Herança Paralela', en: 'Parallel Inheritance' },
+        'lazy-class': { pt: 'Classe Preguiçosa', en: 'Lazy Class' },
+        'speculative-generality': { pt: 'Generalidade Especulativa', en: 'Speculative Generality' },
+        'temporary-field': { pt: 'Campo Temporário', en: 'Temporary Field' },
+        'message-chain': { pt: 'Cadeia de Mensagens', en: 'Message Chain' },
+        'middle-man': { pt: 'Homem do Meio', en: 'Middle Man' },
+        'insufficient-modularization': { pt: 'Modularização Insuficiente', en: 'Insufficient Modularization' },
+        'broken-encapsulation': { pt: 'Encapsulamento Quebrado', en: 'Broken Encapsulation' },
+        'alternate-classes': { pt: 'Classes Alternadas', en: 'Alternate Classes' },
+        'data-class': { pt: 'Classe de Dados', en: 'Data Class' },
+        'refused-bequest': { pt: 'Herança Recusada', en: 'Refused Bequest' },
+        'comments': { pt: 'Comentários Excessivos', en: 'Comments' },
+        'duplicate-code': { pt: 'Código Duplicado', en: 'Duplicate Code' },
+        'dead-code': { pt: 'Código Morto', en: 'Dead Code' }
+      };
 
       // Detectar página atual
       const path = window.location.pathname;
       const segments = path.split('/').filter(Boolean);
-      
+
       let html = '<a href="../index.html">🏠 Início</a>';
-      
+      let headerHtml = '';
+
       if (segments.includes('smells')) {
-        html += '<span class="breadcrumb-separator"> / </span>';
-        html += '<a href="index.html">Code Smells</a>';
-        
+        html += '<span class="breadcrumb-separator">/</span>';
+        html += '<a href="index.html">Smells</a>';
+
         const currentPage = segments[segments.length - 1];
         if (currentPage && currentPage !== 'index.html') {
-          const smellName = currentPage.replace('.html', '').replace(/-/g, ' ');
-          const formattedName = smellName.split(' ').map(w => 
-            w.charAt(0).toUpperCase() + w.slice(1)
-          ).join(' ');
-          
-          html += '<span class="breadcrumb-separator"> / </span>';
-          html += `<span>${formattedName}</span>`;
+          const smellId = currentPage.replace('.html', '');
+          const smellData = smellNames[smellId];
+
+          html += '<span class="breadcrumb-separator">/</span>';
+
+          if (smellData) {
+            html += `<span class="breadcrumb-current">${smellData.pt}</span>`;
+            html += `<span class="breadcrumb-smell-en"> | ${smellData.en}</span>`;
+            
+            // Header breadcrumb (aparece ao rolar)
+            headerHtml = `<span class="breadcrumb-current">${smellData.pt}</span><span class="breadcrumb-smell-en"> | ${smellData.en}</span>`;
+          } else {
+            const formattedName = smellId.split('-').map(w =>
+              w.charAt(0).toUpperCase() + w.slice(1)
+            ).join(' ');
+            html += `<span class="breadcrumb-current">${formattedName}</span>`;
+          }
         }
       }
 
       breadcrumb.innerHTML = html;
+      
+      // Preencher breadcrumb do header
+      if (headerBreadcrumb && headerHtml) {
+        headerBreadcrumb.innerHTML = headerHtml;
+        
+        // Mostrar breadcrumb no header ao rolar
+        window.addEventListener('scroll', () => {
+          const heroSection = document.querySelector('.hero');
+          if (heroSection) {
+            const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+            if (window.scrollY > heroBottom - 100) {
+              header.classList.add('show-breadcrumb');
+            } else {
+              header.classList.remove('show-breadcrumb');
+            }
+          }
+        });
+      }
     }
   };
 

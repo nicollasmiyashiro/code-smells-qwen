@@ -223,13 +223,77 @@ code, pre {
   background-color: #ffffff;
   border-bottom: 1px solid #e2e8f0;
   z-index: 1000;
-  transition: background-color var(--transition-normal), border-color var(--transition-normal);
+  transition: all var(--transition-normal);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Dark mode header */
 [data-theme="dark"] .header {
   background-color: #1e293b;
   border-bottom-color: #334155;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Header expandido com breadcrumb em páginas de smell */
+.header.has-breadcrumb {
+  padding-bottom: 0;
+}
+
+.header-breadcrumb {
+  display: none;
+  padding: 0.5rem 0;
+  border-top: 1px solid #f1f5f9;
+  background-color: #f8fafc;
+}
+
+[data-theme="dark"] .header-breadcrumb {
+  border-top-color: #334155;
+  background-color: #0f172a;
+}
+
+.header.show-breadcrumb .header-breadcrumb {
+  display: block;
+  animation: slideDown 0.3s ease;
+}
+
+.header-breadcrumb-content {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--primary-blue);
+}
+
+[data-theme="dark"] .header-breadcrumb-content {
+  color: var(--secondary-orange);
+}
+
+.header-breadcrumb-content .breadcrumb-current {
+  color: var(--primary-blue);
+  font-weight: 700;
+}
+
+[data-theme="dark"] .header-breadcrumb-content .breadcrumb-current {
+  color: var(--secondary-orange);
+}
+
+.header-breadcrumb-content .breadcrumb-smell-en {
+  color: #64748b;
+  font-weight: 400;
+  font-style: italic;
+  margin-left: 0.5rem;
+}
+
+[data-theme="dark"] .header-breadcrumb-content .breadcrumb-smell-en {
+  color: #94a3b8;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .header-content {
@@ -1012,11 +1076,12 @@ code, pre {
   margin: 0;
 }
 
-/* Prism.js Customization - LIGHT MODE */
+/* Prism.js Customization - LIGHT MODE (fundo escuro com texto claro) */
 :not([data-theme="dark"]) code[class*="language-"],
 :not([data-theme="dark"]) pre[class*="language-"] {
-  color: #1e293b !important;
+  color: #f8f8f2 !important;
   background-color: #1e293b !important;
+  text-shadow: none !important;
 }
 
 :not([data-theme="dark"]) .token.comment,
@@ -1081,24 +1146,53 @@ code, pre {
 [data-theme="dark"] pre[class*="language-"] {
   color: #f8f8f2 !important;
   background-color: #0f172a !important;
+  text-shadow: none !important;
 }
 
 /* Diagrams */
 .diagram-container {
   background-color: #f8fafc;
-  border-radius: var(--radius-lg);
-  padding: 2rem;
-  margin: 1.5rem 0;
+  border-radius: var(--radius-xl);
+  padding: 3rem 2rem;
+  margin: 2rem 0;
   text-align: center;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 [data-theme="dark"] .diagram-container {
-  background-color: #334155;
+  background-color: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .diagram-svg {
   max-width: 100%;
   height: auto;
+}
+
+.diagram-svg text {
+  font-family: var(--font-family);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .diagram-svg text {
+  fill: #E2E8F0;
+}
+
+:not([data-theme="dark"]) .diagram-svg text {
+  fill: #0f172a;
+}
+
+.diagram-label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.diagram-sublabel {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.8;
 }
 
 /* Refactoring Cards */
@@ -1546,9 +1640,10 @@ code, pre {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 1rem 0;
+  padding: 1.5rem 0;
   font-size: var(--text-sm);
   color: #64748b;
+  flex-wrap: wrap;
 }
 
 [data-theme="dark"] .breadcrumb {
@@ -1557,6 +1652,8 @@ code, pre {
 
 .breadcrumb a {
   color: #475569;
+  font-weight: 500;
+  transition: color var(--transition-fast);
 }
 
 [data-theme="dark"] .breadcrumb a {
@@ -1569,6 +1666,26 @@ code, pre {
 
 .breadcrumb-separator {
   color: #94a3b8;
+  margin: 0 0.25rem;
+}
+
+.breadcrumb-current {
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .breadcrumb-current {
+  color: var(--secondary-orange);
+}
+
+.breadcrumb-smell-en {
+  color: #94a3b8;
+  font-weight: 400;
+  font-style: italic;
+}
+
+[data-theme="dark"] .breadcrumb-smell-en {
+  color: #64748b;
 }
 
 [data-theme="dark"] .breadcrumb-separator {
