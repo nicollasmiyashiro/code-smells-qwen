@@ -218,7 +218,7 @@
   // ========================================
   const DarkMode = {
     toggle: null,
-    
+
     init() {
       this.toggle = document.querySelector('.theme-toggle');
       if (!this.toggle) return;
@@ -227,9 +227,8 @@
       const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEY);
       if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
-      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.setAttribute('data-theme', 'dark');
       }
+      // Se não houver tema salvo, mantém o tema padrão definido no HTML
 
       // Event listener
       this.toggle.addEventListener('click', () => this.toggleTheme());
