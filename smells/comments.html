@@ -43,6 +43,12 @@
         </button>
       </div>
     </div>
+      <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
   </header>
 
   <main class="smell-detail">
@@ -53,7 +59,13 @@
         <div class="smell-detail-icon">💬</div>
         <h1 class="smell-detail-title">Comentários Excessivos</h1>
         <p class="smell-detail-subtitle">Comments</p>
-      </header>
+          <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
+  </header>
 
       <div class="smell-detail-content">
         <section class="detail-section">
@@ -152,6 +164,68 @@
         if (estado.equals("SP") || estado.equals("RJ")) {
             frete = 15.0;
         } else if (estado.equals("MG") || estado.equals("ES")) {
+            // MG e ES têm frete médio
+            frete = 20.0;
+        } else {
+            // Outros estados têm frete mais caro
+            frete = 30.0;
+        }
+        
+        // Retorna o total final
+        return subtotal - desconto + frete;
+    }
+    
+    // TODO: Implementar validação de estoque
+    // FIXME: Bug quando quantidade é negativa
+    // HACK: Gambiarra para funcionar com sistema legado
+    // XXX: Isso precisa ser refatorado urgentemente
+}</code></pre>
+          </div>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ C#</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-csharp">public class Processador {
+    
+    // Método para calcular o total do pedido
+    // Autor: João Silva
+    // Data: 15/03/2024
+    public double calcularTotal(Pedido p) {
+        // Variável para armazenar o subtotal
+        double subtotal = 0;
+        
+        // Loop para iterar sobre todos os itens
+        for (int i = 0; i < p.getItens().Count; i++) {
+            // Pega o item na posição i
+            Item item = p.getItens()[i);
+            
+            // Calcula o total do item (preço * quantidade)
+            double totalItem = item.getPreco() * item.getQuantidade();
+            
+            // Soma ao subtotal
+            subtotal = subtotal + totalItem;
+        }
+        
+        // Verifica se tem desconto
+        double desconto = 0;
+        if (p.getCliente().isVip()) {
+            // Cliente VIP ganha 15% de desconto
+            desconto = subtotal * 0.15;
+        } else if (subtotal > 1000) {
+            // Pedidos acima de 1000 ganham 10%
+            desconto = subtotal * 0.10;
+        }
+        
+        // Calcula o frete baseado no estado
+        double frete = 0;
+        // Estado do cliente
+        string estado = p.getCliente().getEstado();
+        
+        // SP e RJ têm frete mais barato
+        if (estado=="SP") || estado=="RJ")) {
+            frete = 15.0;
+        } else if (estado=="MG") || estado=="ES")) {
             // MG e ES têm frete médio
             frete = 20.0;
         } else {

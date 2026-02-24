@@ -43,6 +43,12 @@
         </button>
       </div>
     </div>
+      <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
   </header>
 
   <main class="smell-detail">
@@ -53,7 +59,13 @@
         <div class="smell-detail-icon">🔗</div>
         <h1 class="smell-detail-title">Cadeia de Mensagens</h1>
         <p class="smell-detail-subtitle">Message Chain / Train Wreck</p>
-      </header>
+          <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
+  </header>
 
       <div class="smell-detail-content">
         <section class="detail-section">
@@ -144,6 +156,56 @@
     }
     
     public boolean isEntregaEspecial(Pedido pedido) {
+        // Cadeia muito longa
+        return pedido
+            .getCliente()
+            .getEndereco()
+            .getCidade()
+            .getEstado()
+            .getRegiao()
+            .isEspecial();
+    }
+}</code></pre>
+          </div>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ C#</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-csharp">public class PedidoService {
+    
+    public string getCidadeEntrega(Pedido pedido) {
+        // Cadeia longa - Train Wreck!
+        return pedido
+            .getCliente()
+            .getEndereco()
+            .getCidade()
+            .getNome();
+    }
+    
+    public string getNomeContato(Pedido pedido) {
+        // Outra cadeia longa
+        return pedido
+            .getCliente()
+            .getContato()
+            .getNomeCompleto();
+    }
+    
+    public double getDesconto(Pedido pedido) {
+        // Cadeia com verificação de null
+        if (pedido != null 
+            && pedido.getCliente() != null
+            && pedido.getCliente().getCategoria() != null) {
+            
+            return pedido
+                .getCliente()
+                .getCategoria()
+                .getDesconto();
+        }
+        return 0;
+    }
+    
+    public bool isEntregaEspecial(Pedido pedido) {
         // Cadeia muito longa
         return pedido
             .getCliente()

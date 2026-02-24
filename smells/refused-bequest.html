@@ -43,6 +43,12 @@
         </button>
       </div>
     </div>
+      <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
   </header>
 
   <main class="smell-detail">
@@ -53,7 +59,13 @@
         <div class="smell-detail-icon">❌</div>
         <h1 class="smell-detail-title">Herança Recusada</h1>
         <p class="smell-detail-subtitle">Refused Bequest</p>
-      </header>
+          <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
+  </header>
 
       <div class="smell-detail-content">
         <section class="detail-section">
@@ -164,6 +176,71 @@ public class Terceirizado extends Funcionario {
     public void participarReuniao() {
         // Apenas reuniões específicas
         System.out.println(nome + " está em reunião de projeto");
+    }
+    
+    // Campo herdado não faz sentido
+    // salarioBase não se aplica - recebe por hora
+}</code></pre>
+          </div>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ C#</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-csharp">// Classe base
+public class Funcionario {
+    protected string nome;
+    protected double salarioBase;
+    
+    public double calcularBonus() {
+        return salarioBase * 0.20; // 20% de bônus
+    }
+    
+    public void trabalhar() {
+        Console.WriteLine(nome + " está trabalhando");
+    }
+    
+    public void participarReuniao() {
+        Console.WriteLine(nome + " está em reunião");
+    }
+}
+
+// Subclasse que recusa parte da herança
+public class Estagiario extends Funcionario {
+    
+    [Override]
+    public double calcularBonus() {
+        // Estagiários não recebem bônus
+        return 0;
+    }
+    
+    [Override]
+    public void participarReuniao() {
+        // Estagiários não participam de reuniões
+        throw new UnsupportedOperationException(
+            "Estagiários não participam de reuniões"
+        );
+    }
+    
+    // Estagiários têm método diferente
+    public void servirCafe() {
+        Console.WriteLine(nome + " está servindo café");
+    }
+}
+
+// Outra subclasse problemática
+public class Terceirizado extends Funcionario {
+    
+    [Override]
+    public double calcularBonus() {
+        // Terceirizados não recebem bônus da empresa
+        return 0;
+    }
+    
+    [Override]
+    public void participarReuniao() {
+        // Apenas reuniões específicas
+        Console.WriteLine(nome + " está em reunião de projeto");
     }
     
     // Campo herdado não faz sentido

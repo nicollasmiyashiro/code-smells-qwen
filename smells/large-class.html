@@ -43,6 +43,12 @@
         </button>
       </div>
     </div>
+      <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
   </header>
 
   <main class="smell-detail">
@@ -53,7 +59,13 @@
         <div class="smell-detail-icon">🐘</div>
         <h1 class="smell-detail-title">Classe Grande</h1>
         <p class="smell-detail-subtitle">Large Class / God Class</p>
-      </header>
+          <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
+  </header>
 
       <div class="smell-detail-content">
         <section class="detail-section">
@@ -155,6 +167,59 @@
     public String gerarRelatorio() { /* ... */ }
     public byte[] gerarPDF() { /* ... */ }
     public Map<String, Object> toMap() { /* ... */ }
+    
+    // Getters e setters para todos os campos...
+}</code></pre>
+          </div>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ C#</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-csharp">public class PedidoManager {
+    // Campos de dados
+    private Long id;
+    private Cliente cliente;
+    private List<Item> itens;
+    private double subtotal;
+    private double desconto;
+    private double frete;
+    private double total;
+    private Date dataPedido;
+    private string status;
+    
+    // Campos de infraestrutura
+    private Connection dbConnection;
+    private EmailService emailService;
+    private Logger logger;
+    private CacheService cache;
+    
+    // Métodos de domínio
+    public void adicionarItem(Item item) { /* ... */ }
+    public void removerItem(Long itemId) { /* ... */ }
+    public void calcularTotal() { /* ... */ }
+    public void aplicarDesconto(double percentual) { /* ... */ }
+    
+    // Métodos de persistência
+    public void salvarNoBanco() { /* ... */ }
+    public void atualizarNoBanco() { /* ... */ }
+    public void deletarDoBanco() { /* ... */ }
+    public Pedido buscarPorId(Long id) { /* ... */ }
+    
+    // Métodos de notificação
+    public void enviarEmailConfirmacao() { /* ... */ }
+    public void enviarEmailCobranca() { /* ... */ }
+    public void enviarSMSStatus() { /* ... */ }
+    
+    // Métodos de validação
+    public bool validarDados() { /* ... */ }
+    public bool validarEstoque() { /* ... */ }
+    public bool validarPagamento() { /* ... */ }
+    
+    // Métodos de relatório
+    public string gerarRelatorio() { /* ... */ }
+    public byte[] gerarPDF() { /* ... */ }
+    public Dictionary<string, Object> toMap() { /* ... */ }
     
     // Getters e setters para todos os campos...
 }</code></pre>

@@ -43,6 +43,12 @@
         </button>
       </div>
     </div>
+      <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
   </header>
 
   <main class="smell-detail">
@@ -53,7 +59,13 @@
         <div class="smell-detail-icon">∥</div>
         <h1 class="smell-detail-title">Herança Paralela</h1>
         <p class="smell-detail-subtitle">Parallel Inheritance Hierarchies</p>
-      </header>
+          <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
+  </header>
 
       <div class="smell-detail-content">
         <section class="detail-section">
@@ -179,6 +191,83 @@ public class BeneficioFactory {
             return new BeneficioEstagiario();
         }
         throw new IllegalArgumentException("Tipo desconhecido");
+    }
+}</code></pre>
+          </div>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ C#</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-csharp">// Hierarquia de Funcionários
+public abstract class Funcionario {
+    protected string nome;
+    protected double salarioBase;
+    
+    public abstract double calcularBonus();
+}
+
+public class FuncionarioCLT extends Funcionario {
+    [Override]
+    public double calcularBonus() {
+        return salarioBase * 0.5; // 50% do salário
+    }
+}
+
+public class FuncionarioPJ extends Funcionario {
+    [Override]
+    public double calcularBonus() {
+        return salarioBase * 0.1; // 10% do salário
+    }
+}
+
+public class Estagiario extends Funcionario {
+    [Override]
+    public double calcularBonus() {
+        return 0; // Sem bônus
+    }
+}
+
+// Hierarquia PARALELA de Benefícios
+public abstract class BeneficioFuncionario {
+    protected Funcionario funcionario;
+    
+    public abstract List<string> getBeneficios();
+}
+
+public class BeneficioCLT extends BeneficioFuncionario {
+    [Override]
+    public List<string> getBeneficios() {
+        return Arrays.asList("VT", "VR", "Plano de Saúde", "INSS");
+    }
+}
+
+public class BeneficioPJ extends BeneficioFuncionario {
+    [Override]
+    public List<string> getBeneficios() {
+        return Arrays.asList("Sem benefícios obrigatórios");
+    }
+}
+
+public class BeneficioEstagiario extends BeneficioFuncionario {
+    [Override]
+    public List<string> getBeneficios() {
+        return Arrays.asList("VT", "Seguro de Vida");
+    }
+}
+
+// Fábrica que espelha as hierarquias
+public class BeneficioFactory {
+    
+    public static BeneficioFuncionario criar(Funcionario funcionario) {
+        if (funcionario instanceof FuncionarioCLT) {
+            return new BeneficioCLT();
+        } else if (funcionario instanceof FuncionarioPJ) {
+            return new BeneficioPJ();
+        } else if (funcionario instanceof Estagiario) {
+            return new BeneficioEstagiario();
+        }
+        throw new ArgumentException("Tipo desconhecido");
     }
 }</code></pre>
           </div>

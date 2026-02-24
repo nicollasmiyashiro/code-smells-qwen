@@ -43,6 +43,12 @@
         </button>
       </div>
     </div>
+      <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
   </header>
 
   <main class="smell-detail">
@@ -53,7 +59,13 @@
         <div class="smell-detail-icon">🔁</div>
         <h1 class="smell-detail-title">Classes Alternadas</h1>
         <p class="smell-detail-subtitle">Alternate Classes with Different Interfaces</p>
-      </header>
+          <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
+  </header>
 
       <div class="smell-detail-content">
         <section class="detail-section">
@@ -149,6 +161,71 @@ public class ClienteDTO {
     
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
+}
+
+// Conversor necessário porque as classes são diferentes
+public class ClienteMapper {
+    public static Cliente toEntity(ClienteDTO dto) {
+        Cliente cliente = new Cliente();
+        cliente.setId(dto.getIdentifier());
+        cliente.setNome(dto.getFullName());
+        cliente.setEmail(dto.getEmailAddress());
+        return cliente;
+    }
+    
+    public static ClienteDTO toDto(Cliente cliente) {
+        ClienteDTO dto = new ClienteDTO();
+        dto.setIdentifier(cliente.getId());
+        dto.setFullName(cliente.getNome());
+        dto.setEmailAddress(cliente.getEmail());
+        dto.setActive(true);
+        return dto;
+    }
+}</code></pre>
+          </div>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ C#</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-csharp">// Classe antiga - criada primeiro
+public class Cliente {
+    private Long id;
+    private string nome;
+    private string email;
+    
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public string getNome() { return nome; }
+    public void setNome(string nome) { this.nome = nome; }
+    
+    public string getEmail() { return email; }
+    public void setEmail(string email) { this.email = email; }
+    
+    public string getNomeCompleto() {
+        return nome.toUpperCase();
+    }
+}
+
+// Classe nova - criada depois, interface diferente
+public class ClienteDTO {
+    private Long identifier;
+    private string fullName;
+    private string emailAddress;
+    private bool active;
+    
+    public Long getIdentifier() { return identifier; }
+    public void setIdentifier(Long identifier) { this.identifier = identifier; }
+    
+    public string getFullName() { return fullName; }
+    public void setFullName(string fullName) { this.fullName = fullName; }
+    
+    public string getEmailAddress() { return emailAddress; }
+    public void setEmailAddress(string emailAddress) { this.emailAddress = emailAddress; }
+    
+    public bool isActive() { return active; }
+    public void setActive(bool active) { this.active = active; }
 }
 
 // Conversor necessário porque as classes são diferentes

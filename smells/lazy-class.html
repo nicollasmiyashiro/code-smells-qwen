@@ -43,6 +43,12 @@
         </button>
       </div>
     </div>
+      <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
   </header>
 
   <main class="smell-detail">
@@ -53,7 +59,13 @@
         <div class="smell-detail-icon">😴</div>
         <h1 class="smell-detail-title">Classe Preguiçosa</h1>
         <p class="smell-detail-subtitle">Lazy Class / Freeloader</p>
-      </header>
+          <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
+  </header>
 
       <div class="smell-detail-content">
         <section class="detail-section">
@@ -163,6 +175,77 @@ public class ClienteService {
         String numero,
         String cidade,
         String estado
+    ) {
+        // Cria objeto intermediário desnecessário
+        EnderecoInfo endereco = new EnderecoInfo();
+        endereco.setRua(rua);
+        endereco.setNumero(numero);
+        endereco.setCidade(cidade);
+        endereco.setEstado(estado);
+        
+        Cliente cliente = new Cliente(nome, email, endereco);
+        repository.salvar(cliente);
+    }
+}</code></pre>
+          </div>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ C#</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-csharp">// Classe que não faz nada útil sozinha
+public class EnderecoInfo {
+    private string rua;
+    private string numero;
+    private string cidade;
+    private string estado;
+    
+    // Apenas getters e setters
+    public string getRua() { return rua; }
+    public void setRua(string rua) { this.rua = rua; }
+    
+    public string getNumero() { return numero; }
+    public void setNumero(string numero) { this.numero = numero; }
+    
+    public string getCidade() { return cidade; }
+    public void setCidade(string cidade) { this.cidade = cidade; }
+    
+    public string getEstado() { return estado; }
+    public void setEstado(string estado) { this.estado = estado; }
+}
+
+// Classe que usa EnderecoInfo
+public class Cliente {
+    private string nome;
+    private string email;
+    private EnderecoInfo endereco;
+    
+    public Cliente(string nome, string email, EnderecoInfo endereco) {
+        this.nome = nome;
+        this.email = email;
+        this.endereco = endereco;
+    }
+    
+    // Métodos que apenas delegam
+    public string getRua() {
+        return endereco.getRua();
+    }
+    
+    public string getCidade() {
+        return endereco.getCidade();
+    }
+}
+
+// Uso desnecessariamente complexo
+public class ClienteService {
+    
+    public void cadastrarCliente(
+        string nome,
+        string email,
+        string rua,
+        string numero,
+        string cidade,
+        string estado
     ) {
         // Cria objeto intermediário desnecessário
         EnderecoInfo endereco = new EnderecoInfo();

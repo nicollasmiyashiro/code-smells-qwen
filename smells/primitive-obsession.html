@@ -43,6 +43,12 @@
         </button>
       </div>
     </div>
+      <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
   </header>
 
   <main class="smell-detail">
@@ -53,7 +59,13 @@
         <div class="smell-detail-icon">🔤</div>
         <h1 class="smell-detail-title">Primitive Obsession</h1>
         <p class="smell-detail-subtitle">Primitive Obsession / Obsessão por Primitivos</p>
-      </header>
+          <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
+  </header>
 
       <div class="smell-detail-content">
         <section class="detail-section">
@@ -156,6 +168,65 @@
     }
     
     private boolean isValidCpf(String cpf) {
+        // Lógica complexa de validação de CPF
+        // Repetida em vários lugares do sistema
+        if (cpf == null || cpf.length() != 11) return false;
+        // ... mais validações
+        return true;
+    }
+}</code></pre>
+          </div>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ C#</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-csharp">public class UsuarioService {
+    
+    public void cadastrarUsuario(
+        string nome,
+        string email,
+        string cpf,
+        string telefone,
+        string cep,
+        double salario,
+        int idade
+    ) {
+        // Validação de email repetida em vários lugares
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new ArgumentException("Email inválido");
+        }
+        
+        // Validação de CPF repetida
+        if (!isValidCpf(cpf)) {
+            throw new ArgumentException("CPF inválido");
+        }
+        
+        // Validação de telefone
+        if (!telefone.matches("^\\d{10,11}$")) {
+            throw new ArgumentException("Telefone inválido");
+        }
+        
+        // Validação de salário
+        if (salario < 0) {
+            throw new ArgumentException("Salário não pode ser negativo");
+        }
+        
+        // Validação de idade
+        if (idade < 18 || idade > 120) {
+            throw new ArgumentException("Idade inválida");
+        }
+        
+        // Formatação de CPF sempre repetida
+        string cpfFormatado = cpf.replaceFirst(
+            "(\\d{3})(\\d{3})(\\d{3})(\\d{2})",
+            "$1.$2.$3-$4"
+        );
+        
+        // Salvar usuário...
+    }
+    
+    private bool isValidCpf(string cpf) {
         // Lógica complexa de validação de CPF
         // Repetida em vários lugares do sistema
         if (cpf == null || cpf.length() != 11) return false;

@@ -43,6 +43,12 @@
         </button>
       </div>
     </div>
+      <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
   </header>
 
   <main class="smell-detail">
@@ -53,7 +59,13 @@
         <div class="smell-detail-icon">👤</div>
         <h1 class="smell-detail-title">Homem do Meio</h1>
         <p class="smell-detail-subtitle">Middle Man</p>
-      </header>
+          <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
+  </header>
 
       <div class="smell-detail-content">
         <section class="detail-section">
@@ -156,6 +168,80 @@ public class GerenciadorPagamento {
     
     // Apenas delega
     public Status consultarStatus(String transacaoId) {
+        return servico.consultarStatus(transacaoId);
+    }
+    
+    // Apenas delega
+    public Relatorio gerarRelatorio(Date inicio, Date fim) {
+        return servico.gerarRelatorio(inicio, fim);
+    }
+    
+    // Getter que expõe o serviço real
+    public ServicoPagamento getServico() {
+        return servico;
+    }
+}
+
+// Uso confuso
+public class PedidoService {
+    
+    public void finalizarPedido(Pedido pedido) {
+        // Qual usar? Gerenciador ou Servico?
+        GerenciadorPagamento gerenciador = new GerenciadorPagamento(servico);
+        gerenciador.processar(pedido.getPagamento());
+    }
+}</code></pre>
+          </div>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ C#</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-csharp">// Classe real com toda a lógica
+public class ServicoPagamento {
+    
+    public bool processar(Pagamento pagamento) {
+        // Lógica complexa de processamento
+        validarPagamento(pagamento);
+        conectarGateway();
+        enviarTransacao(pagamento);
+        return confirmarTransacao();
+    }
+    
+    public Estorno estornar(string transacaoId) {
+        // Lógica de estorno
+    }
+    
+    public Status consultarStatus(string transacaoId) {
+        // Consulta status
+    }
+    
+    public Relatorio gerarRelatorio(Date inicio, Date fim) {
+        // Gera relatório
+    }
+}
+
+// Homem do meio - apenas delega
+public class GerenciadorPagamento {
+    
+    private ServicoPagamento servico;
+    
+    public Gerenciadorpagamento(ServicoPagamento servico) {
+        this.servico = servico;
+    }
+    
+    // Apenas delega - não adiciona nada!
+    public bool processar(Pagamento pagamento) {
+        return servico.processar(pagamento);
+    }
+    
+    // Apenas delega
+    public Estorno estornar(string transacaoId) {
+        return servico.estornar(transacaoId);
+    }
+    
+    // Apenas delega
+    public Status consultarStatus(string transacaoId) {
         return servico.consultarStatus(transacaoId);
     }
     

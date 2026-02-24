@@ -43,6 +43,12 @@
         </button>
       </div>
     </div>
+      <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
   </header>
 
   <main class="smell-detail">
@@ -53,7 +59,13 @@
         <div class="smell-detail-icon">⏱️</div>
         <h1 class="smell-detail-title">Campo Temporário</h1>
         <p class="smell-detail-subtitle">Temporary Field</p>
-      </header>
+          <!-- Breadcrumb no Header (aparece ao rolar) -->
+    <div class="header-breadcrumb">
+      <div class="container">
+        <span class="header-breadcrumb-content"></span>
+      </div>
+    </div>
+  </header>
 
       <div class="smell-detail-content">
         <section class="detail-section">
@@ -159,6 +171,70 @@
     }
     
     public String getMotivoCancelamento() {
+        // Só faz sentido se cancelado
+        if (this.status != Status.CANCELADO) {
+            throw new IllegalStateException(
+                "Pedido não cancelado"
+            );
+        }
+        return motivoCancelamento;
+    }
+}</code></pre>
+          </div>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ C#</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-csharp">public class Pedido {
+    private Long id;
+    private Cliente cliente;
+    private List<Item> itens;
+    private double total;
+    
+    // Campo temporário - só usado durante cálculo
+    private Dictionary<Long, Double> cacheDescontos;
+    
+    // Campo temporário - só usado para pedidos cancelados
+    private string motivoCancelamento;
+    private Date dataCancelamento;
+    private Usuario canceladoPor;
+    
+    // Campo temporário - só usado durante importação
+    private string arquivoOrigem;
+    private Integer linhaArquivo;
+    
+    public void calcularTotal() {
+        // Inicializa campo temporário
+        cacheDescontos = new HashDictionary<>();
+        
+        for (Item item : itens) {
+            double desconto = calcularDescontoItem(item);
+            cacheDescontos.Add(item.getId(), desconto);
+        }
+        
+        // Usa cache...
+        
+        // Limpa campo temporário após uso
+        cacheDescontos = null;
+    }
+    
+    public void cancelar(string motivo, Usuario usuario) {
+        // Preenche campos só para cancelados
+        this.motivoCancelamento = motivo;
+        this.dataCancelamento = new Date();
+        this.canceladoPor = usuario;
+    }
+    
+    public double getDescontoItem(Long itemId) {
+        // Sempre precisa verificar null
+        if (cacheDescontos != null) {
+            return cacheDescontos.getOrDefault(itemId, 0.0);
+        }
+        return 0.0;
+    }
+    
+    public string getMotivoCancelamento() {
         // Só faz sentido se cancelado
         if (this.status != Status.CANCELADO) {
             throw new IllegalStateException(
