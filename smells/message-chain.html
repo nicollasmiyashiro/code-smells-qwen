@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Message Chain - Code Smell. Longa cadeia de chamadas de métodos (getA().getB().getC()).">
+  <title>Cadeia de Mensagens - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>🔗</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">🔗</div>
+        <h1 class="smell-detail-title">Cadeia de Mensagens</h1>
+        <p class="smell-detail-subtitle">Message Chain / Train Wreck</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            Uma <strong>Cadeia de Mensagens</strong> (também chamada de "Train Wreck") ocorre 
+            quando você vê uma longa sequência de chamadas de métodos encadeados, como 
+            <code>objeto.getA().getB().getC().getD()</code>.
+          </p>
+          <p class="mt-2">
+            Este padrão viola a <strong>Lei de Demeter</strong> (Princípio do Menor Conhecimento): 
+            um objeto deve conversar apenas com seus amigos diretos, não com os amigos de seus amigos.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Acoplamento profundo:</strong> Código conhece estrutura interna de objetos.</li>
+            <li><strong>Fragilidade:</strong> Mudança em qualquer elo quebra toda a cadeia.</li>
+            <li><strong>Difícil teste:</strong> Requer mockar toda a cadeia de objetos.</li>
+            <li><strong>NullSafety:</strong> Cada elo pode ser null, exigindo verificações.</li>
+            <li><strong>Violação de encapsulamento:</strong> Atravessa múltiplas camadas.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Cadeias com 3+ chamadas de método (getA().getB().getC()).</li>
+            <li>Múltiplos pontos (.) em uma única linha de código.</li>
+            <li>Código que navega por várias camadas do modelo.</li>
+            <li>Verificações de null em cascata.</li>
+            <li>Conhecimento de estrutura interna de outras classes.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Cadeia Longa</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class PedidoService {
+    
+    public String getCidadeEntrega(Pedido pedido) {
+        // Cadeia longa - Train Wreck!
+        return pedido
+            .getCliente()
+            .getEndereco()
+            .getCidade()
+            .getNome();
+    }
+    
+    public String getNomeContato(Pedido pedido) {
+        // Outra cadeia longa
+        return pedido
+            .getCliente()
+            .getContato()
+            .getNomeCompleto();
+    }
+    
+    public double getDesconto(Pedido pedido) {
+        // Cadeia com verificação de null
+        if (pedido != null 
+            && pedido.getCliente() != null
+            && pedido.getCliente().getCategoria() != null) {
+            
+            return pedido
+                .getCliente()
+                .getCategoria()
+                .getDesconto();
+        }
+        return 0;
+    }
+    
+    public boolean isEntregaEspecial(Pedido pedido) {
+        // Cadeia muito longa
+        return pedido
+            .getCliente()
+            .getEndereco()
+            .getCidade()
+            .getEstado()
+            .getRegiao()
+            .isEspecial();
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Delegação Adequada</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Pedido com métodos delegados
+public class Pedido {
+    private Cliente cliente;
+    
+    // Delega para Cliente
+    public String getCidadeEntrega() {
+        return cliente != null 
+            ? cliente.getCidadeEntrega() 
+            : null;
+    }
+    
+    // Delega para Cliente
+    public String getNomeContato() {
+        return cliente != null 
+            ? cliente.getNomeContato() 
+            : null;
+    }
+    
+    // Delega para Cliente
+    public double getDesconto() {
+        return cliente != null 
+            ? cliente.getDesconto() 
+            : 0;
+    }
+    
+    // Delega para Cliente
+    public boolean isEntregaEspecial() {
+        return cliente != null 
+            ? cliente.isEntregaEspecial() 
+            : false;
+    }
+}
+
+// Cliente também delega
+public class Cliente {
+    private Endereco endereco;
+    private Contato contato;
+    private Categoria categoria;
+    
+    public String getCidadeEntrega() {
+        return endereco != null 
+            ? endereco.getCidadeNome() 
+            : null;
+    }
+    
+    public String getNomeContato() {
+        return contato != null 
+            ? contato.getNomeCompleto() 
+            : null;
+    }
+    
+    public double getDesconto() {
+        return categoria != null 
+            ? categoria.getDesconto() 
+            : 0;
+    }
+    
+    public boolean isEntregaEspecial() {
+        return endereco != null 
+            && endereco.getEstado() != null
+            && endereco.getEstado().getRegiao().isEspecial();
+    }
+}
+
+// Uso limpo
+public class PedidoService {
+    
+    public void processar(Pedido pedido) {
+        String cidade = pedido.getCidadeEntrega();
+        String contato = pedido.getNomeContato();
+        double desconto = pedido.getDesconto();
+        boolean especial = pedido.isEntregaEspecial();
+        
+        // Código limpo, sem cadeias!
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Hide Delegate (Esconder Delegado)</h3>
+              <p class="refactoring-description">
+                Crie métodos na classe intermediária que escondem a chamada ao objeto delegado.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Extract Method (Extrair Método)</h3>
+              <p class="refactoring-description">
+                Extraia a cadeia para um método com nome que expressa a intenção.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Move Method (Mover Método)</h3>
+              <p class="refactoring-description">
+                Mova o método que usa a cadeia para mais perto do final da cadeia.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Null Object</h3>
+              <p class="refactoring-description">
+                Substitua verificações de null por objetos Null que têm comportamento padrão.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="temporary-field.html" class="nav-btn nav-btn-prev" data-prev="temporary-field.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Campo Temporário</span>
+          </a>
+          <a href="middle-man.html" class="nav-btn nav-btn-next" data-next="middle-man.html">
+            <span>Homem do Meio</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

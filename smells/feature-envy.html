@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Feature Envy - Code Smell. Método que usa mais dados de outra classe do que da sua própria.">
+  <title>Feature Envy - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>💚</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">💚</div>
+        <h1 class="smell-detail-title">Feature Envy</h1>
+        <p class="smell-detail-subtitle">Feature Envy / Inveja de Feature</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            <strong>Feature Envy</strong> ocorre quando um método em uma classe usa mais dados ou 
+            métodos de outra classe do que da sua própria classe. É como se o método "invejasse" 
+            os dados da outra classe.
+          </p>
+          <p class="mt-2">
+            Este smell indica que o método está mais relacionado à classe "invejada" do que à 
+            classe onde está definido, violando o princípio de que dados e comportamento devem 
+            estar juntos.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Alto acoplamento:</strong> Método depende fortemente de outra classe.</li>
+            <li><strong>Baixa coesão:</strong> Comportamento não está com seus dados.</li>
+            <li><strong>Violação de encapsulamento:</strong> Dados são expostos via getters.</li>
+            <li><strong>Fragilidade:</strong> Mudanças na classe "invejada" quebram o método.</li>
+            <li><strong>Dificuldade de teste:</strong> Requer mocks complexos da outra classe.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Método chama muitos getters de outro objeto.</li>
+            <li>Mais chamadas a métodos de outra classe do que da própria.</li>
+            <li>Parâmetro do método é acessado mais que <code>this</code>.</li>
+            <li>Cálculos que usam apenas dados de outro objeto.</li>
+            <li>Método que poderia ser nomeado como parte da outra classe.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Feature Envy</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Classe com dados
+public class Pedido {
+    private List<Item> itens;
+    private Cliente cliente;
+    private double subtotal;
+    private double desconto;
+    private double frete;
+    
+    // Apenas getters e setters
+    public List<Item> getItens() { return itens; }
+    public Cliente getCliente() { return cliente; }
+    public double getSubtotal() { return subtotal; }
+    public double getDesconto() { return desconto; }
+    public double getFrete() { return frete; }
+    // ... setters
+}
+
+// Classe que "inveja" Pedido
+public class RelatorioService {
+    
+    public double calcularTotal(Pedido pedido) {
+        // Usa apenas dados do pedido, nada do serviço
+        double subtotal = 0;
+        for (Item item : pedido.getItens()) {
+            subtotal += item.getPreco() * item.getQuantidade();
+        }
+        
+        double desconto = 0;
+        if (pedido.getCliente().isVip()) {
+            desconto = subtotal * 0.15;
+        } else if (subtotal > 1000) {
+            desconto = subtotal * 0.10;
+        }
+        
+        double frete = calcularFrete(pedido.getCliente());
+        
+        double total = subtotal - desconto + frete;
+        double imposto = total * 0.18;
+        
+        return total + imposto;
+    }
+    
+    public double calcularFrete(Cliente cliente) {
+        // Também inveja Cliente
+        String estado = cliente.getEstado();
+        return switch (estado) {
+            case "SP", "RJ" -> 15.0;
+            case "MG", "ES" -> 20.0;
+            default -> 30.0;
+        };
+    }
+    
+    public String gerarResumo(Pedido pedido) {
+        // Mais inveja de Pedido
+        StringBuilder sb = new StringBuilder();
+        sb.append("Pedido de: ").append(pedido.getCliente().getNome());
+        sb.append("\nItens: ").append(pedido.getItens().size());
+        sb.append("\nSubtotal: R$ ").append(pedido.getSubtotal());
+        sb.append("\nDesconto: R$ ").append(pedido.getDesconto());
+        return sb.toString();
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Comportamento na Classe Certa</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Classe com dados E comportamento
+public class Pedido {
+    private List<Item> itens;
+    private Cliente cliente;
+    
+    public double calcularSubtotal() {
+        return itens.stream()
+            .mapToDouble(i -> i.getPreco() * i.getQuantidade())
+            .sum();
+    }
+    
+    public double calcularDesconto() {
+        double subtotal = calcularSubtotal();
+        if (cliente.isVip()) {
+            return subtotal * 0.15;
+        } else if (subtotal > 1000) {
+            return subtotal * 0.10;
+        } else if (subtotal > 500) {
+            return subtotal * 0.05;
+        }
+        return 0;
+    }
+    
+    public double calcularFrete() {
+        return cliente.calcularFrete();
+    }
+    
+    public double calcularTotal() {
+        double subtotal = calcularSubtotal();
+        double desconto = calcularDesconto();
+        double frete = calcularFrete();
+        double totalParcial = subtotal - desconto + frete;
+        return totalParcial + (totalParcial * 0.18);
+    }
+    
+    public String gerarResumo() {
+        return String.format(
+            "Pedido de: %s\nItens: %d\nTotal: R$ %.2f",
+            cliente.getNome(),
+            itens.size(),
+            calcularTotal()
+        );
+    }
+}
+
+// Cliente também tem seu comportamento
+public class Cliente {
+    private String nome;
+    private String estado;
+    private boolean vip;
+    
+    public double calcularFrete() {
+        return switch (estado) {
+            case "SP", "RJ" -> 15.0;
+            case "MG", "ES" -> 20.0;
+            default -> 30.0;
+        };
+    }
+}
+
+// Serviço usa o comportamento, não os dados
+public class RelatorioService {
+    
+    public void imprimirResumo(Pedido pedido) {
+        System.out.println(pedido.gerarResumo());
+        System.out.println("Total: R$ " + pedido.calcularTotal());
+    }
+    
+    public void processarPedido(Pedido pedido) {
+        double total = pedido.calcularTotal();
+        // Processa o pagamento...
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Move Method (Mover Método)</h3>
+              <p class="refactoring-description">
+                Mova o método que tem feature envy para a classe que ele mais usa. Esta é a 
+                refatoração principal para este smell.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Hide Delegate (Esconder Delegado)</h3>
+              <p class="refactoring-description">
+                Crie métodos na classe intermediária para esconder o acesso direto aos objetos 
+                delegados.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Extract Method + Move Method</h3>
+              <p class="refactoring-description">
+                Extraia a parte do método que tem envy e mova para a classe apropriada.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📊</span>
+            Diagrama Ilustrativo
+          </h2>
+          <div class="diagram-container">
+            <svg class="diagram-svg" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+              <!-- Antes -->
+              <text x="150" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#ef4444">ANTES</text>
+              
+              <rect x="50" y="50" width="120" height="80" fill="#3b82f6" opacity="0.2" rx="8"/>
+              <rect x="50" y="50" width="120" height="80" stroke="#3b82f6" stroke-width="2" fill="none" rx="8"/>
+              <text x="110" y="75" text-anchor="middle" font-size="11" fill="#3b82f6">Pedido</text>
+              <text x="110" y="95" text-anchor="middle" font-size="9" fill="#666">• itens</text>
+              <text x="110" y="110" text-anchor="middle" font-size="9" fill="#666">• cliente</text>
+              
+              <rect x="250" y="50" width="120" height="80" fill="#ef4444" opacity="0.2" rx="8"/>
+              <rect x="250" y="50" width="120" height="80" stroke="#ef4444" stroke-width="2" fill="none" rx="8"/>
+              <text x="310" y="75" text-anchor="middle" font-size="11" fill="#ef4444">RelatorioService</text>
+              <text x="310" y="95" text-anchor="middle" font-size="9" fill="#666">• calcularTotal()</text>
+              <text x="310" y="110" text-anchor="middle" font-size="9" fill="#666">• gerarResumo()</text>
+              
+              <!-- Setas de dependência -->
+              <path d="M 250 70 Q 200 70 180 70" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowhead6)"/>
+              <path d="M 250 90 Q 200 90 180 90" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowhead6)"/>
+              <path d="M 250 110 Q 200 110 180 110" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowhead6)"/>
+              
+              <text x="220" y="65" font-size="8" fill="#ef4444">getItens()</text>
+              <text x="220" y="85" font-size="8" fill="#ef4444">getCliente()</text>
+              <text x="220" y="105" font-size="8" fill="#ef4444">getSubtotal()</text>
+              
+              <!-- Seta transformação -->
+              <line x1="400" y1="90" x2="440" y2="90" stroke="#f97316" stroke-width="2" marker-end="url(#arrowhead6)"/>
+              
+              <!-- Depois -->
+              <text x="520" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#22c55e">DEPOIS</text>
+              
+              <rect x="460" y="50" width="120" height="100" fill="#22c55e" opacity="0.2" rx="8"/>
+              <rect x="460" y="50" width="120" height="100" stroke="#22c55e" stroke-width="2" fill="none" rx="8"/>
+              <text x="520" y="75" text-anchor="middle" font-size="11" fill="#22c55e">Pedido</text>
+              <text x="520" y="95" text-anchor="middle" font-size="9" fill="#666">• calcularTotal()</text>
+              <text x="520" y="110" text-anchor="middle" font-size="9" fill="#666">• gerarResumo()</text>
+              <text x="520" y="125" text-anchor="middle" font-size="9" fill="#666">• calcularFrete()</text>
+              
+              <rect x="460" y="170" width="120" height="50" fill="#3b82f6" opacity="0.2" rx="8"/>
+              <rect x="460" y="170" width="120" height="50" stroke="#3b82f6" stroke-width="2" fill="none" rx="8"/>
+              <text x="520" y="195" text-anchor="middle" font-size="10" fill="#3b82f6">RelatorioService</text>
+              <text x="520" y="210" text-anchor="middle" font-size="9" fill="#666">• imprimir()</text>
+              
+              <defs>
+                <marker id="arrowhead6" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/>
+                </marker>
+              </defs>
+            </svg>
+            <p class="mt-2" style="color: var(--text-secondary); font-size: var(--text-sm);">
+                Métodos são movidos para a classe dos dados que eles mais usam
+            </p>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="primitive-obsession.html" class="nav-btn nav-btn-prev" data-prev="primitive-obsession.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Primitive Obsession</span>
+          </a>
+          <a href="large-class.html" class="nav-btn nav-btn-next" data-next="large-class.html">
+            <span>Large Class</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Speculative Generality - Code Smell. Código criado para funcionalidades futuras que nunca são usadas.">
+  <title>Generalidade Especulativa - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>🔮</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">🔮</div>
+        <h1 class="smell-detail-title">Generalidade Especulativa</h1>
+        <p class="smell-detail-subtitle">Speculative Generality</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            <strong>Generalidade Especulativa</strong> ocorre quando código é criado para 
+            suportar funcionalidades futuras que nunca são implementadas. É o resultado de 
+            tentar prever demais o futuro e criar abstrações "úteis" que nunca são usadas.
+          </p>
+          <p class="mt-2">
+            Este smell viola o princípio <strong>YAGNI (You Ain't Gonna Need It)</strong>: 
+            não implemente funcionalidades até que você realmente precise delas.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Complexidade desnecessária:</strong> Código que ninguém usa.</li>
+            <li><strong>Manutenção desperdiçada:</strong> Tempo gasto mantendo código inútil.</li>
+            <li><strong>Confusão:</strong> Desenvolvedores não sabem se devem usar as abstrações.</li>
+            <li><strong>Performance:</strong> Overhead de abstrações não utilizadas.</li>
+            <li><strong>Oportunidade perdida:</strong> Tempo que poderia ser usado em features reais.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Parâmetros que nunca são usados (sempre null ou valor padrão).</li>
+            <li>Métodos marcados como @Deprecated logo após criação.</li>
+            <li>Interfaces com implementações vazias ou dummy.</li>
+            <li>Comentários como "para uso futuro" ou "preparado para expansão".</li>
+            <li>Classes abstratas com apenas uma subclasse concreta.</li>
+            <li>Configurações que nunca são alteradas do padrão.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Generalidade Especulativa</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Interface "preparada para o futuro"
+public interface ProcessadorPagamento {
+    boolean processar(Pagamento pagamento);
+    boolean processarComReembolso(Pagamento pagamento, double valor);
+    boolean processarParcial(Pagamento pagamento, int parcelas);
+    boolean processarInternacional(Pagamento pagamento, Currency moeda);
+    boolean processarRecorrente(Pagamento pagamento, int frequencia);
+    void cancelar(String transacaoId);
+    void estornar(String transacaoId, MotivoEstorno motivo);
+}
+
+// Implementação atual - só usa 2 métodos
+public class ProcessadorPagamentoImpl implements ProcessadorPagamento {
+    
+    @Override
+    public boolean processar(Pagamento pagamento) {
+        // Implementação real
+        return true;
+    }
+    
+    @Override
+    public boolean processarComReembolso(Pagamento pagamento, double valor) {
+        // Nunca usado - sempre retorna false
+        return false;
+    }
+    
+    @Override
+    public boolean processarParcial(Pagamento pagamento, int parcelas) {
+        // Nunca usado - delega para processar normal
+        return processar(pagamento);
+    }
+    
+    @Override
+    public boolean processarInternacional(Pagamento pagamento, Currency moeda) {
+        // Nunca usado - não suportamos internacional
+        throw new UnsupportedOperationException("Não suportado");
+    }
+    
+    @Override
+    public boolean processarRecorrente(Pagamento pagamento, int frequencia) {
+        // Nunca usado
+        throw new UnsupportedOperationException("Não suportado");
+    }
+    
+    @Override
+    public void cancelar(String transacaoId) {
+        // Implementação real
+    }
+    
+    @Override
+    public void estornar(String transacaoId, MotivoEstorno motivo) {
+        // Motivo nunca é usado
+        estornar(transacaoId);
+    }
+    
+    private void estornar(String transacaoId) {
+        // Implementação real
+    }
+}
+
+// Factory "preparada para múltiplos processadores"
+public class ProcessadorFactory {
+    
+    private static Map<String, ProcessadorPagamento> processadores = new HashMap<>();
+    
+    static {
+        // Só temos um processador, mas a estrutura está pronta para mais!
+        processadores.put("CREDITO", new ProcessadorPagamentoImpl());
+        processadores.put("DEBITO", new ProcessadorPagamentoImpl());
+        // processadores.put("PIX", new ProcessadorPix()); // Futuro!
+        // processadores.put("BOLETO", new ProcessadorBoleto()); // Futuro!
+    }
+    
+    public static ProcessadorPagamento getProcessador(String tipo) {
+        return processadores.getOrDefault(tipo, new ProcessadorPagamentoImpl());
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - YAGNI (You Ain't Gonna Need It)</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Interface simples para o que realmente precisamos
+public interface ProcessadorPagamento {
+    boolean processar(Pagamento pagamento);
+    void cancelar(String transacaoId);
+    void estornar(String transacaoId);
+}
+
+// Implementação focada no necessário
+public class ProcessadorPagamentoImpl implements ProcessadorPagamento {
+    
+    @Override
+    public boolean processar(Pagamento pagamento) {
+        // Implementação real do que usamos hoje
+        validarPagamento(pagamento);
+        conectarGateway();
+        return confirmarTransacao();
+    }
+    
+    @Override
+    public void cancelar(String transacaoId) {
+        // Implementação real
+    }
+    
+    @Override
+    public void estornar(String transacaoId) {
+        // Implementação real
+    }
+}
+
+// Uso direto, sem factory desnecessária
+public class PedidoService {
+    
+    private final ProcessadorPagamento processador;
+    
+    // Injeção direta - se precisar de outro no futuro, mudamos aqui
+    public PedidoService(ProcessadorPagamento processador) {
+        this.processador = processador;
+    }
+    
+    public void finalizarPedido(Pedido pedido) {
+        processador.processar(pedido.getPagamento());
+    }
+    
+    // Quando realmente precisarmos de PIX, adicionamos:
+    // 1. Criamos ProcessadorPix implementando ProcessadorPagamento
+    // 2. Injetamos ProcessadorPix onde necessário
+    // 3. Sem factory, sem complexidade antecipada
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Collapse Hierarchy (Colapsar Hierarquia)</h3>
+              <p class="refactoring-description">
+                Remova classes abstratas e interfaces que têm apenas uma implementação.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Remove Unused Parameters (Remover Parâmetros Não Usados)</h3>
+              <p class="refactoring-description">
+                Elimine parâmetros que sempre recebem o mesmo valor ou são ignorados.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Inline Method (Método Inline)</h3>
+              <p class="refactoring-description">
+                Substitua métodos que apenas delegam por seu conteúdo real.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Remove Dead Code (Remover Código Morto)</h3>
+              <p class="refactoring-description">
+                Delete métodos e classes que não são usados em nenhum lugar.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">💡</span>
+            Princípio YAGNI
+          </h2>
+          <p>
+            <strong>YAGNI (You Ain't Gonna Need It)</strong> é um princípio do Extreme 
+            Programming que diz: "Sempre implemente as coisas quando você realmente 
+            precisar delas, nunca quando você apenas prevê que precisará."
+          </p>
+          <p class="mt-2">
+            Isso não significa não planejar. Significa não <strong>implementar</strong> 
+            baseado em previsões. Quando a necessidade surgir, você terá tempo de 
+            implementar adequadamente.
+          </p>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="lazy-class.html" class="nav-btn nav-btn-prev" data-prev="lazy-class.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Classe Preguiçosa</span>
+          </a>
+          <a href="temporary-field.html" class="nav-btn nav-btn-next" data-next="temporary-field.html">
+            <span>Campo Temporário</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

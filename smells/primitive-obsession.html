@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Primitive Obsession - Code Smell. Uso excessivo de tipos primitivos ao invés de objetos de domínio.">
+  <title>Primitive Obsession - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>🔤</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">🔤</div>
+        <h1 class="smell-detail-title">Primitive Obsession</h1>
+        <p class="smell-detail-subtitle">Primitive Obsession / Obsessão por Primitivos</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            <strong>Primitive Obsession</strong> é o uso excessivo de tipos primitivos (String, int, 
+            double, boolean) para representar conceitos do domínio, ao invés de criar objetos 
+            especializados.
+          </p>
+          <p class="mt-2">
+            Isso resulta em código que não expressa adequadamente o domínio do problema e perde 
+            oportunidades de encapsular comportamento e validação relacionados aos dados.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Falta de expressividade:</strong> Código não comunica claramente a intenção.</li>
+            <li><strong>Validação duplicada:</strong> Mesmas validações repetidas em vários lugares.</li>
+            <li><strong>Erros de tipo:</strong> Parâmetros do mesmo tipo podem ser trocados acidentalmente.</li>
+            <li><strong>Comportamento disperso:</strong> Lógica relacionada aos dados fica espalhada.</li>
+            <li><strong>Dificuldade de evolução:</strong> Mudar representação requer alterar muito código.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Strings usadas para representar conceitos (CPF, email, telefone).</li>
+            <li>Validações de formato repetidas (regex para email, CPF, etc.).</li>
+            <li>Constantes de tipo definidas como String ou int.</li>
+            <li>Métodos que recebem múltiplos parâmetros do mesmo tipo primitivo.</li>
+            <li>Cálculos ou operações que deveriam pertencer aos dados.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Primitivos Excessivos</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class UsuarioService {
+    
+    public void cadastrarUsuario(
+        String nome,
+        String email,
+        String cpf,
+        String telefone,
+        String cep,
+        double salario,
+        int idade
+    ) {
+        // Validação de email repetida em vários lugares
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new IllegalArgumentException("Email inválido");
+        }
+        
+        // Validação de CPF repetida
+        if (!isValidCpf(cpf)) {
+            throw new IllegalArgumentException("CPF inválido");
+        }
+        
+        // Validação de telefone
+        if (!telefone.matches("^\\d{10,11}$")) {
+            throw new IllegalArgumentException("Telefone inválido");
+        }
+        
+        // Validação de salário
+        if (salario < 0) {
+            throw new IllegalArgumentException("Salário não pode ser negativo");
+        }
+        
+        // Validação de idade
+        if (idade < 18 || idade > 120) {
+            throw new IllegalArgumentException("Idade inválida");
+        }
+        
+        // Formatação de CPF sempre repetida
+        String cpfFormatado = cpf.replaceFirst(
+            "(\\d{3})(\\d{3})(\\d{3})(\\d{2})",
+            "$1.$2.$3-$4"
+        );
+        
+        // Salvar usuário...
+    }
+    
+    private boolean isValidCpf(String cpf) {
+        // Lógica complexa de validação de CPF
+        // Repetida em vários lugares do sistema
+        if (cpf == null || cpf.length() != 11) return false;
+        // ... mais validações
+        return true;
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Value Objects</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Value Object para Email
+public class Email {
+    private final String valor;
+    
+    public Email(String valor) {
+        if (!isValidEmail(valor)) {
+            throw new IllegalArgumentException("Email inválido");
+        }
+        this.valor = valor;
+    }
+    
+    private boolean isValidEmail(String email) {
+        return email != null && email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
+    }
+    
+    public String getValor() { return valor; }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Email)) return false;
+        Email email = (Email) o;
+        return valor.equalsIgnoreCase(email.valor);
+    }
+    
+    @Override
+    public int hashCode() {
+        return valor.toLowerCase().hashCode();
+    }
+}
+
+// Value Object para CPF
+public class Cpf {
+    private final String valor;
+    
+    public Cpf(String valor) {
+        String numeros = valor.replaceAll("\\D", "");
+        if (!isValidCpf(numeros)) {
+            throw new IllegalArgumentException("CPF inválido");
+        }
+        this.valor = numeros;
+    }
+    
+    private boolean isValidCpf(String cpf) {
+        if (cpf == null || cpf.length() != 11) return false;
+        // Lógica de validação em um único lugar
+        return true;
+    }
+    
+    public String formatado() {
+        return valor.replaceFirst("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
+    }
+    
+    public String getValor() { return valor; }
+}
+
+// Value Object para Dinheiro
+public class Dinheiro {
+    private final BigDecimal valor;
+    private final Currency moeda;
+    
+    public Dinheiro(BigDecimal valor, Currency moeda) {
+        if (valor.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Valor não pode ser negativo");
+        }
+        this.valor = valor;
+        this.moeda = moeda;
+    }
+    
+    public Dinheiro adicionar(Dinheiro outro) {
+        if (!this.moeda.equals(outro.moeda)) {
+            throw new IllegalArgumentException("Moedas diferentes");
+        }
+        return new Dinheiro(this.valor.add(outro.valor), this.moeda);
+    }
+    
+    public Dinheiro multiplicar(double fator) {
+        return new Dinheiro(
+            this.valor.multiply(BigDecimal.valueOf(fator)), 
+            this.moeda
+        );
+    }
+}
+
+// Uso limpo e seguro
+public class UsuarioService {
+    
+    public void cadastrarUsuario(Usuario usuario) {
+        // Validações já foram feitas nos Value Objects
+        repository.salvar(usuario);
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Data Value with Object</h3>
+              <p class="refactoring-description">
+                Substitua um valor de dado primitivo por um objeto que contenha o valor e 
+                comportamento relacionado.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Parameter Object</h3>
+              <p class="refactoring-description">
+                Crie objetos para agrupar parâmetros relacionados, especialmente quando são 
+                do mesmo tipo primitivo.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Value Object Pattern</h3>
+              <p class="refactoring-description">
+                Crie objetos imutáveis que representam valores do domínio. Eles devem ser 
+                comparados por valor, não por identidade.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Type-Safe Enums</h3>
+              <p class="refactoring-description">
+                Substitua constantes primitivas por enums type-safe que podem ter comportamento.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📊</span>
+            Diagrama Ilustrativo
+          </h2>
+          <div class="diagram-container">
+            <svg class="diagram-svg" viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+              <!-- Antes -->
+              <text x="150" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#ef4444">ANTES</text>
+              
+              <rect x="50" y="50" width="200" height="100" fill="#ef4444" opacity="0.1" rx="8"/>
+              <rect x="50" y="50" width="200" height="100" stroke="#ef4444" stroke-width="2" fill="none" rx="8"/>
+              
+              <text x="70" y="75" font-size="10" fill="#666">Tipos primitivos:</text>
+              <text x="80" y="92" font-size="9" fill="#888">• String email</text>
+              <text x="80" y="105" font-size="9" fill="#888">• String cpf</text>
+              <text x="80" y="118" font-size="9" fill="#888">• double salario</text>
+              <text x="80" y="131" font-size="9" fill="#888">• int idade</text>
+              
+              <!-- Seta -->
+              <line x1="260" y1="100" x2="300" y2="100" stroke="#f97316" stroke-width="2" marker-end="url(#arrowhead5)"/>
+              
+              <!-- Depois -->
+              <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#22c55e">DEPOIS</text>
+              
+              <rect x="350" y="50" width="100" height="30" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="350" y="50" width="100" height="30" stroke="#3b82f6" stroke-width="2" fill="none" rx="6"/>
+              <text x="400" y="70" text-anchor="middle" font-size="10" fill="#3b82f6">Email</text>
+              
+              <rect x="470" y="50" width="100" height="30" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="470" y="50" width="100" height="30" stroke="#3b82f6" stroke-width="2" fill="none" rx="6"/>
+              <text x="520" y="70" text-anchor="middle" font-size="10" fill="#3b82f6">Cpf</text>
+              
+              <rect x="350" y="90" width="100" height="30" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="350" y="90" width="100" height="30" stroke="#3b82f6" stroke-width="2" fill="none" rx="6"/>
+              <text x="400" y="110" text-anchor="middle" font-size="10" fill="#3b82f6">Dinheiro</text>
+              
+              <rect x="470" y="90" width="100" height="30" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="470" y="90" width="100" height="30" stroke="#3b82f6" stroke-width="2" fill="none" rx="6"/>
+              <text x="520" y="110" text-anchor="middle" font-size="10" fill="#3b82f6">Idade</text>
+              
+              <rect x="410" y="140" width="80" height="30" fill="#22c55e" opacity="0.2" rx="6"/>
+              <rect x="410" y="140" width="80" height="30" stroke="#22c55e" stroke-width="2" fill="none" rx="6"/>
+              <text x="450" y="160" text-anchor="middle" font-size="10" fill="#22c55e">Usuario</text>
+              
+              <line x1="400" y1="80" x2="410" y2="140" stroke="#888" stroke-width="1"/>
+              <line x1="520" y1="80" x2="490" y2="140" stroke="#888" stroke-width="1"/>
+              <line x1="400" y1="120" x2="430" y2="140" stroke="#888" stroke-width="1"/>
+              <line x1="520" y1="120" x2="470" y2="140" stroke="#888" stroke-width="1"/>
+              
+              <defs>
+                <marker id="arrowhead5" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+                </marker>
+              </defs>
+            </svg>
+            <p class="mt-2" style="color: var(--text-secondary); font-size: var(--text-sm);">
+                Primitivos são substituídos por Value Objects com comportamento
+            </p>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="data-clumps.html" class="nav-btn nav-btn-prev" data-prev="data-clumps.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Data Clumps</span>
+          </a>
+          <a href="feature-envy.html" class="nav-btn nav-btn-next" data-next="feature-envy.html">
+            <span>Feature Envy</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

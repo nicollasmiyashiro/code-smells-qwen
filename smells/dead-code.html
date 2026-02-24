@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dead Code - Code Smell. Código que não é mais executado ou necessário.">
+  <title>Código Morto - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>💀</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">💀</div>
+        <h1 class="smell-detail-title">Código Morto</h1>
+        <p class="smell-detail-subtitle">Dead Code</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            <strong>Código Morto</strong> é qualquer código que não é mais executado ou necessário, 
+            mas permanece na base de código. Isso inclui métodos não chamados, variáveis não usadas, 
+            classes órfãs e código comentado.
+          </p>
+          <p class="mt-2">
+            Código morto é como lixo acumulado: ocupa espaço, causa confusão e torna a manutenção 
+            mais difícil. Se não está sendo usado, deve ser removido.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Confusão:</strong> Desenvolvedores não sabem se o código é necessário.</li>
+            <li><strong>Manutenção desperdiçada:</strong> Tempo gasto entendendo código inútil.</li>
+            <li><strong>Build mais lento:</strong> Código extra para compilar e analisar.</li>
+            <li><strong>Falsos positivos:</strong> Ferramentas alertam sobre código que parece bug.</li>
+            <li><strong>Versionamento inchado:</strong> Histórico do git com código desnecessário.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Métodos privados nunca chamados.</li>
+            <li>Variáveis atribuídas mas nunca lidas.</li>
+            <li>Classes não referenciadas em nenhum lugar.</li>
+            <li>Código comentado (blocos grandes de // ou /* */).</li>
+            <li>Parâmetros de método não utilizados.</li>
+            <li>Imports não usados.</li>
+            <li>Código após return, throw ou break incondicional.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Código Morto</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class ProcessadorPagamento {
+    
+    // Variável nunca usada
+    private static final String VERSAO = "2.0";
+    private double taxaProcessamento = 0.029;
+    
+    // Método antigo - não remover, pode ser útil depois
+    /*
+    public double calcularTaxaAntiga(double valor) {
+        return valor * 0.035;
+    }
+    */
+    
+    // Método privado nunca chamado
+    private void logProcessamento(String mensagem) {
+        System.out.println("[LOG] " + mensagem);
+    }
+    
+    // Parâmetro não usado
+    public boolean processar(double valor, String moeda) {
+        // moeda não é usada
+        if (valor <= 0) {
+            return false;
+        }
+        
+        double taxa = taxaProcessamento;
+        
+        // Código inalcançável
+        return valor * taxa > 0;
+        System.out.println("Processado"); // Nunca executado
+    }
+    
+    // Método público nunca chamado externamente
+    public void metodoLegado() {
+        // Foi usado apenas em testes antigos
+        System.out.println("Legado");
+    }
+    
+    // Getter para campo não usado
+    public double getTaxaProcessamento() {
+        return taxaProcessamento;
+    }
+    
+    public void setTaxaProcessamento(double taxa) {
+        this.taxaProcessamento = taxa;
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Código Limpo</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class ProcessadorPagamento {
+    
+    private double taxaProcessamento = 0.029;
+    
+    public boolean processar(double valor) {
+        if (valor <= 0) {
+            return false;
+        }
+        
+        return valor * taxaProcessamento > 0;
+    }
+    
+    // Se precisar de log no futuro, implemente adequadamente
+    // Se precisar de suporte a múltiplas moedas, adicione como nova feature
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Remove Dead Code (Remover Código Morto)</h3>
+              <p class="refactoring-description">
+                Simplesmente delete o código não usado. Se precisar no futuro, use controle de 
+                versão (git) para recuperar.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Remove Unused Parameter (Remover Parâmetro Não Usado)</h3>
+              <p class="refactoring-description">
+                Remova parâmetros que não são usados no corpo do método. Atualize todas as chamadas.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Remove Unused Field (Remover Campo Não Usado)</h3>
+              <p class="refactoring-description">
+                Delete campos que não são lidos em nenhum lugar da classe.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Remove Unused Method (Remover Método Não Usado)</h3>
+              <p class="refactoring-description">
+                Elimine métodos que não são chamados em nenhum lugar do sistema.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📊</span>
+            Diagrama Ilustrativo
+          </h2>
+          <div class="diagram-container">
+            <svg class="diagram-svg" viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+              <!-- Antes -->
+              <text x="150" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#ef4444">ANTES</text>
+              
+              <rect x="50" y="50" width="200" height="120" fill="#ef4444" opacity="0.1" rx="8"/>
+              <rect x="50" y="50" width="200" height="120" stroke="#ef4444" stroke-width="2" fill="none" rx="8"/>
+              
+              <rect x="70" y="70" width="160" height="20" fill="#ef4444" opacity="0.3" rx="4"/>
+              <text x="150" y="84" text-anchor="middle" font-size="9" fill="#ef4444">método não usado</text>
+              
+              <rect x="70" y="95" width="160" height="20" fill="#ef4444" opacity="0.3" rx="4"/>
+              <text x="150" y="109" text-anchor="middle" font-size="9" fill="#ef4444">variável não lida</text>
+              
+              <rect x="70" y="120" width="160" height="20" fill="#ef4444" opacity="0.3" rx="4"/>
+              <text x="150" y="134" text-anchor="middle" font-size="9" fill="#ef4444">código comentado</text>
+              
+              <rect x="70" y="145" width="160" height="20" fill="#22c55e" opacity="0.3" rx="4"/>
+              <text x="150" y="159" text-anchor="middle" font-size="9" fill="#22c55e">código útil</text>
+              
+              <!-- Seta -->
+              <line x1="260" y1="110" x2="300" y2="110" stroke="#f97316" stroke-width="2" marker-end="url(#arrowhead8)"/>
+              
+              <!-- Depois -->
+              <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#22c55e">DEPOIS</text>
+              
+              <rect x="350" y="70" width="200" height="60" fill="#22c55e" opacity="0.1" rx="8"/>
+              <rect x="350" y="70" width="200" height="60" stroke="#22c55e" stroke-width="2" fill="none" rx="8"/>
+              
+              <rect x="370" y="90" width="160" height="30" fill="#22c55e" opacity="0.3" rx="4"/>
+              <text x="450" y="110" text-anchor="middle" font-size="10" fill="#22c55e">apenas código útil</text>
+              
+              <!-- Ícones de lixo -->
+              <text x="280" y="80" font-size="20">🗑️</text>
+              <text x="280" y="105" font-size="20">🗑️</text>
+              <text x="280" y="130" font-size="20">🗑️</text>
+              
+              <defs>
+                <marker id="arrowhead8" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+                </marker>
+              </defs>
+            </svg>
+            <p class="mt-2" style="color: var(--text-secondary); font-size: var(--text-sm);">
+                Código morto é removido, mantendo apenas o necessário
+            </p>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="duplicate-code.html" class="nav-btn nav-btn-prev" data-prev="duplicate-code.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Código Duplicado</span>
+          </a>
+          <a href="long-function.html" class="nav-btn nav-btn-next" data-next="long-function.html">
+            <span>Funções Longas</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

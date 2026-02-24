@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Divergent Change - Code Smell. Classe que muda por motivos diferentes em momentos diferentes.">
+  <title>Mudança Divergente - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>🔄</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">🔄</div>
+        <h1 class="smell-detail-title">Mudança Divergente</h1>
+        <p class="smell-detail-subtitle">Divergent Change</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            <strong>Mudança Divergente</strong> ocorre quando uma classe é frequentemente alterada 
+            por razões diferentes. Por exemplo, uma classe que muda quando há alterações em regras 
+            de negócio E quando há mudanças no banco de dados.
+          </p>
+          <p class="mt-2">
+            Este smell viola o <strong>Princípio da Responsabilidade Única (SRP)</strong>: uma 
+            classe deve ter apenas um motivo para mudar.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Risco de regressão:</strong> Mudança em uma área quebra outra.</li>
+            <li><strong>Revisões complexas:</strong> Code reviews difíceis por misturar concerns.</li>
+            <li><strong>Conflitos de merge:</strong> Times diferentes editam a mesma classe.</li>
+            <li><strong>Testes frágeis:</strong> Testes falham por motivos não relacionados.</li>
+            <li><strong>Dificuldade de evolução:</strong> Mudanças independentes se atrapalham.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Histórico do git mostra mudanças por motivos diferentes.</li>
+            <li>Métodos agrupados por "tipo" de mudança (ex: "// Métodos de BD", "// Métodos de API").</li>
+            <li>Pessoas diferentes modificam a mesma classe para propósitos diferentes.</li>
+            <li>Releases diferentes tocam na mesma classe para features diferentes.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Mudanças por Múltiplos Motivos</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Esta classe muda por:
+// 1. Mudanças nas regras de desconto
+// 2. Mudanças no schema do banco
+// 3. Mudanças na API externa de pagamento
+public class PedidoService {
+    
+    // === Lógica de Negócio (muda com regras) ===
+    public double calcularDesconto(Cliente cliente, double valor) {
+        if (cliente.isVip()) return valor * 0.15;
+        if (valor > 1000) return valor * 0.10;
+        return 0;
+    }
+    
+    public boolean podeCancelar(Pedido pedido) {
+        return pedido.getStatus() == Status.PENDENTE;
+    }
+    
+    // === Persistência (muda com schema do BD) ===
+    public void salvar(Pedido pedido) {
+        String sql = "INSERT INTO pedidos (id, cliente_id, total, status, created_at) " +
+                     "VALUES (?, ?, ?, ?, ?)";
+        // ... executar SQL
+    }
+    
+    public Pedido buscarPorId(Long id) {
+        String sql = "SELECT * FROM pedidos WHERE id = ?";
+        // ... executar SQL e mapear
+    }
+    
+    // === Integração Externa (muda com API de pagamento) ===
+    public boolean processarPagamento(Pedido pedido) {
+        // API v1 do gateway de pagamento
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("https://api.pagamento.com/v1/charge"))
+            .header("Authorization", "Bearer token")
+            .POST(BodyPublishers.ofString(toJson(pedido)))
+            .build();
+        // ... processar resposta
+    }
+    
+    // === Relatórios (muda com requisitos de negócio) ===
+    public String gerarRelatorioVendas() {
+        // Formatação do relatório muda frequentemente
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== RELATÓRIO DE VENDAS ===\n");
+        // ... formatar dados
+        return sb.toString();
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Classes Separadas por Responsabilidade</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Regras de Negócio (muda apenas com regras)
+public class CalculadoraDesconto {
+    public Dinheiro calcular(Cliente cliente, Dinheiro valor) {
+        if (cliente.isVip()) return valor.multiplicar(0.15);
+        if (valor.ehMaiorQue(1000)) return valor.multiplicar(0.10);
+        return Dinheiro.ZERO;
+    }
+}
+
+public class ValidadorPedido {
+    public boolean podeCancelar(Pedido pedido) {
+        return pedido.getStatus() == Status.PENDENTE;
+    }
+}
+
+// Persistência (muda apenas com schema)
+public class PedidoRepository {
+    public void salvar(Pedido pedido) { /* SQL */ }
+    public Pedido buscarPorId(Long id) { /* SQL */ }
+}
+
+// Integração Externa (muda apenas com API)
+public class GatewayPagamento {
+    public boolean processar(Pedido pedido) {
+        // Chamada à API de pagamento
+    }
+}
+
+// Relatórios (muda apenas com formato)
+public class GeradorRelatorioVendas {
+    public String gerar(List<Pedido> pedidos) {
+        // Formatação do relatório
+    }
+}
+
+// Service de Aplicação (orquestra as demais)
+public class PedidoApplicationService {
+    private CalculadoraDesconto calculadora;
+    private PedidoRepository repository;
+    private GatewayPagamento gateway;
+    private GeradorRelatorioVendas gerador;
+    
+    public void processarPedido(Pedido pedido) {
+        Dinheiro desconto = calculadora.calcular(
+            pedido.getCliente(), 
+            pedido.getTotal()
+        );
+        pedido.aplicarDesconto(desconto);
+        repository.salvar(pedido);
+        gateway.processar(pedido);
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Extract Class (Extrair Classe)</h3>
+              <p class="refactoring-description">
+                Identifique grupos de métodos que mudam juntos e extraia-os para classes separadas.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Separate Concerns</h3>
+              <p class="refactoring-description">
+                Separe lógica de domínio, persistência, integração externa e apresentação em 
+                camadas/classes diferentes.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Domain Layer</h3>
+              <p class="refactoring-description">
+                Crie uma camada de domínio pura, sem dependências de infraestrutura.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="large-class.html" class="nav-btn nav-btn-prev" data-prev="large-class.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Classe Grande</span>
+          </a>
+          <a href="scattered-data.html" class="nav-btn nav-btn-next" data-next="scattered-data.html">
+            <span>Dados Espalhados</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

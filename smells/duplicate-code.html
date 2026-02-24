@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Código Duplicado - Code Smell. Mesma estrutura de código aparecendo em múltiplos lugares.">
+  <title>Código Duplicado - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>👯</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">👯</div>
+        <h1 class="smell-detail-title">Código Duplicado</h1>
+        <p class="smell-detail-subtitle">Duplicate Code</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            <strong>Código Duplicado</strong> é considerado o code smell mais grave. Ocorre quando 
+            a mesma estrutura de código aparece em múltiplos lugares no sistema.
+          </p>
+          <p class="mt-2">
+            A duplicação viola o princípio <strong>DRY (Don't Repeat Yourself)</strong> e é a raiz 
+            de muitos problemas de manutenção. Como diz Kent Beck: "Toda vez que você se repetir, 
+            é uma oportunidade de extrair um método".
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Manutenção multiplicada:</strong> Mudanças devem ser feitas em vários lugares.</li>
+            <li><strong>Bugs inconsistentes:</strong> Correção em um local pode não ser aplicada em outros.</li>
+            <li><strong>Código inchado:</strong> Base de código maior que o necessário.</li>
+            <li><strong>Testes duplicados:</strong> Mesma lógica testada múltiplas vezes.</li>
+            <li><strong>Dificuldade de evolução:</strong> Melhorias não se propagam automaticamente.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Copiar e colar código com pequenas variações.</li>
+            <li>Mesma lógica em métodos diferentes.</li>
+            <li>Blocos de código similares em classes diferentes.</li>
+            <li>Comentários que explicam código repetido.</li>
+            <li>Métodos que diferem apenas por nomes de variáveis ou tipos.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Código Duplicado</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class RelatorioCliente {
+    
+    public String formatarNomeCompleto(Cliente cliente) {
+        if (cliente == null) {
+            return "";
+        }
+        String nome = cliente.getPrimeiroNome();
+        String sobrenome = cliente.getSobrenome();
+        if (nome == null) nome = "";
+        if (sobrenome == null) sobrenome = "";
+        return nome.trim() + " " + sobrenome.trim();
+    }
+    
+    public String formatarEndereco(Cliente cliente) {
+        if (cliente == null) {
+            return "";
+        }
+        String rua = cliente.getRua();
+        String cidade = cliente.getCidade();
+        if (rua == null) rua = "";
+        if (cidade == null) cidade = "";
+        return rua.trim() + ", " + cidade.trim();
+    }
+}
+
+public class RelatorioProduto {
+    
+    public String formatarNomeCompleto(Produto produto) {
+        if (produto == null) {
+            return "";
+        }
+        String nome = produto.getNome();
+        String marca = produto.getMarca();
+        if (nome == null) nome = "";
+        if (marca == null) marca = "";
+        return nome.trim() + " - " + marca.trim();
+    }
+    
+    public String formatarDescricao(Produto produto) {
+        if (produto == null) {
+            return "";
+        }
+        String desc = produto.getDescricao();
+        String categoria = produto.getCategoria();
+        if (desc == null) desc = "";
+        if (categoria == null) categoria = "";
+        return desc.trim() + " (" + categoria.trim() + ")";
+    }
+}
+
+public class RelatorioPedido {
+    
+    public String formatarNumero(Pedido pedido) {
+        if (pedido == null) {
+            return "";
+        }
+        String prefixo = pedido.getPrefixo();
+        String numero = pedido.getNumero();
+        if (prefixo == null) prefixo = "";
+        if (numero == null) numero = "";
+        return prefixo.trim() + "-" + numero.trim();
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Código Consolidado</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Utilitário centralizado
+public class Formatador {
+    
+    public static String formatar(String... partes) {
+        if (partes == null || partes.length == 0) {
+            return "";
+        }
+        
+        return Arrays.stream(partes)
+            .map(p -> p != null ? p.trim() : "")
+            .filter(p -> !p.isEmpty())
+            .collect(Collectors.joining(" "));
+    }
+    
+    public static String formatarComSeparador(String separador, String... partes) {
+        if (partes == null || partes.length == 0) {
+            return "";
+        }
+        
+        return Arrays.stream(partes)
+            .map(p -> p != null ? p.trim() : "")
+            .filter(p -> !p.isEmpty())
+            .collect(Collectors.joining(separador));
+    }
+    
+    public static <T> String formatarObjeto(T obj, Function<T, String[]> extrator) {
+        if (obj == null) {
+            return "";
+        }
+        return formatar(extrator.apply(obj));
+    }
+}
+
+// Classes de relatório limpas
+public class RelatorioCliente {
+    
+    public String formatarNomeCompleto(Cliente cliente) {
+        return Formatador.formatarObjeto(cliente, c -> 
+            new String[]{c.getPrimeiroNome(), c.getSobrenome()}
+        );
+    }
+    
+    public String formatarEndereco(Cliente cliente) {
+        return Formatador.formatarComSeparador(", ", 
+            cliente != null ? cliente.getRua() : null,
+            cliente != null ? cliente.getCidade() : null
+        );
+    }
+}
+
+public class RelatorioProduto {
+    
+    public String formatarNomeCompleto(Produto produto) {
+        return Formatador.formatarComSeparador(" - ", 
+            produto != null ? produto.getNome() : null,
+            produto != null ? produto.getMarca() : null
+        );
+    }
+}
+
+public class RelatorioPedido {
+    
+    public String formatarNumero(Pedido pedido) {
+        return Formatador.formatarComSeparador("-", 
+            pedido != null ? pedido.getPrefixo() : null,
+            pedido != null ? pedido.getNumero() : null
+        );
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Extract Method (Extrair Método)</h3>
+              <p class="refactoring-description">
+                Extraia o código duplicado para um método único e substitua as duplicações por 
+                chamadas a esse método.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Pull Up Method (Puxar Método para Cima)</h3>
+              <p class="refactoring-description">
+                Se o código duplicado está em subclasses, mova-o para a classe base.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Form Template Method</h3>
+              <p class="refactoring-description">
+                Crie um método template na classe base com a estrutura comum e deixe as 
+                subclasses implementarem as partes variáveis.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Utility Class</h3>
+              <p class="refactoring-description">
+                Para código duplicado em classes não relacionadas, crie uma classe utilitária 
+                com métodos estáticos.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📊</span>
+            Diagrama Ilustrativo
+          </h2>
+          <div class="diagram-container">
+            <svg class="diagram-svg" viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+              <!-- Antes -->
+              <text x="150" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#ef4444">ANTES</text>
+              
+              <rect x="50" y="50" width="80" height="60" fill="#ef4444" opacity="0.2" rx="6"/>
+              <rect x="50" y="50" width="80" height="60" stroke="#ef4444" stroke-width="2" fill="none" rx="6"/>
+              <text x="90" y="75" text-anchor="middle" font-size="9" fill="#ef4444">Classe A</text>
+              <text x="90" y="95" text-anchor="middle" font-size="8" fill="#666">código X</text>
+              
+              <rect x="150" y="50" width="80" height="60" fill="#ef4444" opacity="0.2" rx="6"/>
+              <rect x="150" y="50" width="80" height="60" stroke="#ef4444" stroke-width="2" fill="none" rx="6"/>
+              <text x="190" y="75" text-anchor="middle" font-size="9" fill="#ef4444">Classe B</text>
+              <text x="190" y="95" text-anchor="middle" font-size="8" fill="#666">código X</text>
+              
+              <rect x="50" y="130" width="80" height="60" fill="#ef4444" opacity="0.2" rx="6"/>
+              <rect x="50" y="130" width="80" height="60" stroke="#ef4444" stroke-width="2" fill="none" rx="6"/>
+              <text x="90" y="155" text-anchor="middle" font-size="9" fill="#ef4444">Classe C</text>
+              <text x="90" y="175" text-anchor="middle" font-size="8" fill="#666">código X</text>
+              
+              <rect x="150" y="130" width="80" height="60" fill="#ef4444" opacity="0.2" rx="6"/>
+              <rect x="150" y="130" width="80" height="60" stroke="#ef4444" stroke-width="2" fill="none" rx="6"/>
+              <text x="190" y="155" text-anchor="middle" font-size="9" fill="#ef4444">Classe D</text>
+              <text x="190" y="175" text-anchor="middle" font-size="8" fill="#666">código X</text>
+              
+              <!-- Seta -->
+              <line x1="240" y1="100" x2="280" y2="100" stroke="#f97316" stroke-width="2" marker-end="url(#arrowhead7)"/>
+              
+              <!-- Depois -->
+              <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#22c55e">DEPOIS</text>
+              
+              <rect x="350" y="50" width="100" height="50" fill="#22c55e" opacity="0.2" rx="6"/>
+              <rect x="350" y="50" width="100" height="50" stroke="#22c55e" stroke-width="2" fill="none" rx="6"/>
+              <text x="400" y="75" text-anchor="middle" font-size="10" fill="#22c55e">Utilitário</text>
+              <text x="400" y="90" text-anchor="middle" font-size="9" fill="#666">métodoX()</text>
+              
+              <rect x="330" y="130" width="60" height="50" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="330" y="130" width="60" height="50" stroke="#3b82f6" stroke-width="1.5" fill="none" rx="6"/>
+              <text x="360" y="155" text-anchor="middle" font-size="8" fill="#3b82f6">A</text>
+              
+              <rect x="400" y="130" width="60" height="50" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="400" y="130" width="60" height="50" stroke="#3b82f6" stroke-width="1.5" fill="none" rx="6"/>
+              <text x="430" y="155" text-anchor="middle" font-size="8" fill="#3b82f6">B</text>
+              
+              <rect x="470" y="130" width="60" height="50" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="470" y="130" width="60" height="50" stroke="#3b82f6" stroke-width="1.5" fill="none" rx="6"/>
+              <text x="500" y="155" text-anchor="middle" font-size="8" fill="#3b82f6">C</text>
+              
+              <line x1="360" y1="130" x2="380" y2="100" stroke="#888" stroke-width="1"/>
+              <line x1="430" y1="130" x2="410" y2="100" stroke="#888" stroke-width="1"/>
+              <line x1="500" y1="130" x2="440" y2="100" stroke="#888" stroke-width="1"/>
+              
+              <defs>
+                <marker id="arrowhead7" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+                </marker>
+              </defs>
+            </svg>
+            <p class="mt-2" style="color: var(--text-secondary); font-size: var(--text-sm);">
+                Código duplicado é consolidado em um único método reutilizável
+            </p>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="comments.html" class="nav-btn nav-btn-prev" data-prev="comments.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Comentários</span>
+          </a>
+          <a href="dead-code.html" class="nav-btn nav-btn-next" data-next="dead-code.html">
+            <span>Código Morto</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

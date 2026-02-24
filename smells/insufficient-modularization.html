@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Insufficient Modularization - Code Smell. Código que deveria estar em módulo/classe separada.">
+  <title>Modularização Insuficiente - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>🧩</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">🧩</div>
+        <h1 class="smell-detail-title">Modularização Insuficiente</h1>
+        <p class="smell-detail-subtitle">Insufficient Modularization</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            <strong>Modularização Insuficiente</strong> ocorre quando código que deveria estar 
+            em um módulo, pacote ou classe separada é mantido junto com código não relacionado. 
+            É o oposto de "Large Class" - aqui o problema é a falta de separação adequada.
+          </p>
+          <p class="mt-2">
+            Este smell indica que a organização do código não reflete adequadamente a estrutura 
+            do domínio ou as responsabilidades do sistema.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Baixa coesão:</strong> Código não relacionado no mesmo lugar.</li>
+            <li><strong>Descoberta difícil:</strong> Difícil encontrar funcionalidades específicas.</li>
+            <li><strong>Reuso limitado:</strong> Não é possível importar apenas o necessário.</li>
+            <li><strong>Build lento:</strong> Mudanças pequenas recompilam código desnecessário.</li>
+            <li><strong>Dependências ocultas:</strong> Acoplamento não é explícito.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Pacotes com nomes genéricos como "util", "common", "misc".</li>
+            <li>Classes utilitárias gigantes com métodos não relacionados.</li>
+            <li>Muitos imports em um arquivo (conhece muitos outros módulos).</li>
+            <li>Comentários separando "seções" não relacionadas.</li>
+            <li>Dificuldade em explicar o que um módulo faz em uma frase.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Pacote "Util" Genérico</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Pacote: com.empresa.util
+// Esta classe tem TUDO que é "útil"
+
+public class Utils {
+    
+    // === Métodos de String ===
+    public static String capitalize(String str) { /* ... */ }
+    public static String reverse(String str) { /* ... */ }
+    public static boolean isEmpty(String str) { /* ... */ }
+    
+    // === Métodos de Número ===
+    public static int parseInt(String str) { /* ... */ }
+    public static double round(double value, int places) { /* ... */ }
+    public static boolean isPositive(Number n) { /* ... */ }
+    
+    // === Métodos de Data ===
+    public static Date hoje() { /* ... */ }
+    public static Date adicionarDias(Date data, int dias) { /* ... */ }
+    public static long diferencaDias(Date d1, Date d2) { /* ... */ }
+    
+    // === Métodos de Arquivo ===
+    public static String lerArquivo(String path) { /* ... */ }
+    public static void escreverArquivo(String path, String conteudo) { /* ... */ }
+    public static boolean existeArquivo(String path) { /* ... */ }
+    
+    // === Métodos de HTTP ===
+    public static String get(String url) { /* ... */ }
+    public static String post(String url, String body) { /* ... */ }
+    public static int getStatuscode() { /* ... */ }
+    
+    // === Métodos de Banco de Dados ===
+    public static Connection getConnection() { /* ... */ }
+    public static void closeConnection(Connection conn) { /* ... */ }
+    public static ResultSet executeQuery(String sql) { /* ... */ }
+    
+    // === Métodos de Criptografia ===
+    public static String md5(String input) { /* ... */ }
+    public static String sha256(String input) { /* ... */ }
+    public static String base64Encode(byte[] data) { /* ... */ }
+    
+    // === Métodos de Validação ===
+    public static boolean isValidEmail(String email) { /* ... */ }
+    public static boolean isValidCpf(String cpf) { /* ... */ }
+    public static boolean isValidCnpj(String cnpj) { /* ... */ }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Módulos Especializados</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Pacote: com.empresa.text
+public class StringUtils {
+    public static String capitalize(String str) { /* ... */ }
+    public static String reverse(String str) { /* ... */ }
+    public static boolean isEmpty(String str) { /* ... */ }
+}
+
+// Pacote: com.empresa.math
+public class NumberUtils {
+    public static int parseInt(String str) { /* ... */ }
+    public static double round(double value, int places) { /* ... */ }
+}
+
+// Pacote: com.empresa.time
+public class DateUtils {
+    public static Date hoje() { /* ... */ }
+    public static Date adicionarDias(Date data, int dias) { /* ... */ }
+}
+
+// Pacote: com.empresa.io
+public class FileUtils {
+    public static String lerArquivo(String path) { /* ... */ }
+    public static void escreverArquivo(String path, String conteudo) { /* ... */ }
+}
+
+// Pacote: com.empresa.http
+public class HttpClient {
+    public static String get(String url) { /* ... */ }
+    public static String post(String url, String body) { /* ... */ }
+}
+
+// Pacote: com.empresa.db
+public class DatabaseUtils {
+    public static Connection getConnection() { /* ... */ }
+    public static void closeConnection(Connection conn) { /* ... */ }
+}
+
+// Pacote: com.empresa.security
+public class CryptoUtils {
+    public static String md5(String input) { /* ... */ }
+    public static String sha256(String input) { /* ... */ }
+}
+
+// Pacote: com.empresa.validation
+public class Validators {
+    public static boolean isValidEmail(String email) { /* ... */ }
+    public static boolean isValidCpf(String cpf) { /* ... */ }
+}
+
+// Uso claro e explícito
+import com.empresa.text.StringUtils;
+import com.empresa.validation.Validators;
+import com.empresa.http.HttpClient;
+
+public class PedidoService {
+    public void processar(Pedido pedido) {
+        if (!Validators.isValidEmail(pedido.getEmail())) {
+            throw new IllegalArgumentException("Email inválido");
+        }
+        
+        String nome = StringUtils.capitalize(pedido.getNome());
+        // ...
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Extract Module/Packet (Extrair Módulo/Pacote)</h3>
+              <p class="refactoring-description">
+                Identifique grupos de funcionalidades relacionadas e mova-as para pacotes separados.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Extract Class (Extrair Classe)</h3>
+              <p class="refactoring-description">
+                Divida classes utilitárias grandes em classes menores e especializadas.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Module Boundaries</h3>
+              <p class="refactoring-description">
+                Defina limites claros entre módulos com dependências explícitas.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Domain-Driven Design</h3>
+              <p class="refactoring-description">
+                Organize módulos baseados no domínio do negócio, não em aspectos técnicos.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="middle-man.html" class="nav-btn nav-btn-prev" data-prev="middle-man.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Homem do Meio</span>
+          </a>
+          <a href="broken-encapsulation.html" class="nav-btn nav-btn-next" data-next="broken-encapsulation.html">
+            <span>Encapsulamento Quebrado</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

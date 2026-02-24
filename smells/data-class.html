@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Data Class - Code Smell. Classe com apenas campos e getters/setters, sem comportamento.">
+  <title>Classe de Dados - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>📋</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">📋</div>
+        <h1 class="smell-detail-title">Classe de Dados</h1>
+        <p class="smell-detail-subtitle">Data Class</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            Uma <strong>Classe de Dados</strong> é uma classe que contém apenas campos (dados) 
+            e getters/setters, sem nenhum comportamento ou lógica de negócio. É essencialmente 
+            um "saco de dados" (data bag).
+          </p>
+          <p class="mt-2">
+            Em orientação a objetos, classes devem encapsular dados E comportamento. Classes 
+            que são apenas dados violam este princípio e resultam em lógica espalhada por 
+            outras classes.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Encapsulamento quebrado:</strong> Dados expostos sem proteção.</li>
+            <li><strong>Lógica espalhada:</strong> Comportamento fica em classes "anêmicas".</li>
+            <li><strong>Invariante não garantido:</strong> Objeto pode ficar em estado inválido.</li>
+            <li><strong>Feature Envy:</strong> Outras classes manipulam os dados diretamente.</li>
+            <li><strong>Domain Model Anêmico:</strong> Modelo de domínio sem comportamento.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Classe com apenas campos privados e getters/setters públicos.</li>
+            <li>Nenhum método além de getters, setters, toString, equals, hashCode.</li>
+            <li>Classe usada apenas para transportar dados entre camadas.</li>
+            <li>DTOs, Entities e Models sem comportamento.</li>
+            <li>Validações feitas fora da classe, não dentro.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Classe de Dados</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Classe anêmica - apenas dados
+public class Pedido {
+    private Long id;
+    private Cliente cliente;
+    private List<Item> itens;
+    private double subtotal;
+    private double desconto;
+    private double frete;
+    private double total;
+    private String status;
+    private Date dataCriacao;
+    
+    // Apenas getters e setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
+    
+    public List<Item> getItens() { return itens; }
+    public void setItens(List<Item> itens) { this.itens = itens; }
+    
+    public double getSubtotal() { return subtotal; }
+    public void setSubtotal(double subtotal) { this.subtotal = subtotal; }
+    
+    public double getDesconto() { return desconto; }
+    public void setDesconto(double desconto) { this.desconto = desconto; }
+    
+    public double getFrete() { return frete; }
+    public void setFrete(double frete) { this.frete = frete; }
+    
+    public double getTotal() { return total; }
+    public void setTotal(double total) { this.total = total; }
+    
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    
+    public Date getDataCriacao() { return dataCriacao; }
+    public void setDataCriacao(Date dataCriacao) { this.dataCriacao = dataCriacao; }
+}
+
+// Lógica em outra classe (Feature Envy)
+public class PedidoService {
+    
+    public void calcularTotal(Pedido pedido) {
+        double subtotal = 0;
+        for (Item item : pedido.getItens()) {
+            subtotal += item.getPreco() * item.getQuantidade();
+        }
+        pedido.setSubtotal(subtotal);
+        
+        double desconto = 0;
+        if (pedido.getCliente().isVip()) {
+            desconto = subtotal * 0.15;
+        }
+        pedido.setDesconto(desconto);
+        
+        double total = subtotal - desconto + pedido.getFrete();
+        pedido.setTotal(total);
+    }
+    
+    public void adicionarItem(Pedido pedido, Item item) {
+        pedido.getItens().add(item);
+        calcularTotal(pedido); // Recalcula tudo
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Classe Rica em Comportamento</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Classe com dados E comportamento
+public class Pedido {
+    private final Long id;
+    private final Cliente cliente;
+    private final List<Item> itens;
+    private StatusPedido status;
+    private final LocalDateTime dataCriacao;
+    
+    public Pedido(Cliente cliente) {
+        this.id = UUID.randomUUID().toString();
+        this.cliente = cliente;
+        this.itens = new ArrayList<>();
+        this.status = StatusPedido.CRIADO;
+        this.dataCriacao = LocalDateTime.now();
+    }
+    
+    public void adicionarItem(Item item) {
+        validarItemAdicao(item);
+        itens.add(item);
+    }
+    
+    public void removerItem(Long itemId) {
+        itens.removeIf(i -> i.getId().equals(itemId));
+    }
+    
+    public Dinheiro calcularSubtotal() {
+        return itens.stream()
+            .map(Item::getTotal)
+            .reduce(Dinheiro.ZERO, Dinheiro::adicionar);
+    }
+    
+    public Dinheiro calcularDesconto() {
+        if (cliente.isVip()) {
+            return calcularSubtotal().multiplicar(0.15);
+        }
+        if (calcularSubtotal().ehMaiorQue(1000)) {
+            return calcularSubtotal().multiplicar(0.10);
+        }
+        return Dinheiro.ZERO;
+    }
+    
+    public Dinheiro calcularTotal() {
+        return calcularSubtotal()
+            .subtrair(calcularDesconto())
+            .adicionar(calcularFrete());
+    }
+    
+    public void finalizar() {
+        if (itens.isEmpty()) {
+            throw new IllegalStateException("Pedido sem itens");
+        }
+        this.status = StatusPedido.FINALIZADO;
+    }
+    
+    public void cancelar() {
+        if (status != StatusPedido.CRIADO && status != StatusPedido.PENDENTE) {
+            throw new IllegalStateException("Pedido não pode ser cancelado");
+        }
+        this.status = StatusPedido.CANCELADO;
+    }
+    
+    private void validarItemAdicao(Item item) {
+        if (status != StatusPedido.CRIADO && status != StatusPedido.PENDENTE) {
+            throw new IllegalStateException("Pedido já finalizado");
+        }
+    }
+    
+    private Dinheiro calcularFrete() {
+        return cliente.calcularFrete();
+    }
+    
+    // Getters apenas para dados necessários
+    public StatusPedido getStatus() { return status; }
+    public LocalDateTime getDataCriacao() { return dataCriacao; }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Move Method (Mover Método)</h3>
+              <p class="refactoring-description">
+                Mova métodos que operam nos dados da classe para dentro da própria classe.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Encapsulate Field (Encapsular Campo)</h3>
+              <p class="refactoring-description">
+                Torne campos privados e crie métodos que protegem invariantes ao modificar.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Data Class with Domain Model</h3>
+              <p class="refactoring-description">
+                Transforme a classe de dados em um modelo de domínio rico com comportamento.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Factory Method</h3>
+              <p class="refactoring-description">
+                Crie métodos factory que garantem que o objeto seja criado em estado válido.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="alternate-classes.html" class="nav-btn nav-btn-prev" data-prev="alternate-classes.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Classes Alternadas</span>
+          </a>
+          <a href="refused-bequest.html" class="nav-btn nav-btn-next" data-next="refused-bequest.html">
+            <span>Herança Recusada</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

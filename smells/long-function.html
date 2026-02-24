@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Funções Longas - Code Smell. Métodos que fazem demais, com muitas linhas de código e responsabilidades múltiplas.">
+  <title>Funções Longas - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>📏</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">📏</div>
+        <h1 class="smell-detail-title">Funções Longas</h1>
+        <p class="smell-detail-subtitle">Long Function</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <!-- Definição -->
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            Uma <strong>Função Longa</strong> é um método que contém muitas linhas de código e tenta 
+            realizar múltiplas tarefas simultaneamente. Geralmente, quando você precisa rolar a tela 
+            várias vezes para ver todo o método, é um sinal claro de que ele está muito longo.
+          </p>
+          <p class="mt-2">
+            Funções longas são difíceis de entender, testar e manter. Elas violam o princípio da 
+            Responsabilidade Única (SRP) e tornam o código propenso a bugs.
+          </p>
+        </section>
+
+        <!-- Problemas -->
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Dificuldade de compreensão:</strong> Muito código em um só lugar torna difícil entender a lógica.</li>
+            <li><strong>Testabilidade reduzida:</strong> Testar uma função que faz muitas coisas requer muitos casos de teste.</li>
+            <li><strong>Reutilização limitada:</strong> Código embutido em funções longas não pode ser reutilizado facilmente.</li>
+            <li><strong>Manutenção complexa:</strong> Mudanças podem ter efeitos colaterais inesperados.</li>
+            <li><strong>Debug difícil:</strong> Encontrar bugs em funções longas é como procurar agulha no palheiro.</li>
+            <li><strong>Violação do SRP:</strong> A função tem mais de um motivo para mudar.</li>
+          </ul>
+        </section>
+
+        <!-- Sintomas -->
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Método com mais de 20-30 linhas de código.</li>
+            <li>Você precisa rolar a tela para ver todo o método.</li>
+            <li>A função contém múltiplos blocos lógicos separados por comentários.</li>
+            <li>Nomes de variáveis genéricos como <code>temp</code>, <code>data</code>, <code>result</code>.</li>
+            <li>Múltiplos níveis de indentação (if/for/while aninhados).</li>
+            <li>A função faz coisas que poderiam ter nomes próprios descritivos.</li>
+          </ul>
+        </section>
+
+        <!-- Código RUIM -->
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Função Longa</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class ProcessadorPedidos {
+    
+    public void processarPedido(Pedido pedido) {
+        // Validar dados do pedido
+        if (pedido == null) {
+            throw new IllegalArgumentException("Pedido não pode ser nulo");
+        }
+        if (pedido.getItens() == null || pedido.getItens().isEmpty()) {
+            throw new IllegalArgumentException("Pedido deve ter itens");
+        }
+        if (pedido.getCliente() == null) {
+            throw new IllegalArgumentException("Cliente não informado");
+        }
+        
+        // Calcular subtotal
+        double subtotal = 0;
+        for (Item item : pedido.getItens()) {
+            subtotal += item.getPreco() * item.getQuantidade();
+        }
+        
+        // Calcular desconto
+        double desconto = 0;
+        if (pedido.getCliente().isVip()) {
+            desconto = subtotal * 0.15;
+        } else if (subtotal > 1000) {
+            desconto = subtotal * 0.10;
+        } else if (subtotal > 500) {
+            desconto = subtotal * 0.05;
+        }
+        
+        // Calcular frete
+        double frete = 0;
+        String estado = pedido.getCliente().getEstado();
+        if (estado.equals("SP") || estado.equals("RJ")) {
+            frete = 15.0;
+        } else if (estado.equals("MG") || estado.equals("ES")) {
+            frete = 20.0;
+        } else {
+            frete = 30.0;
+        }
+        
+        // Calcular total
+        double total = subtotal - desconto + frete;
+        
+        // Aplicar imposto
+        double imposto = total * 0.18;
+        total += imposto;
+        
+        // Salvar no banco
+        PedidoRepository repo = new PedidoRepository();
+        pedido.setSubtotal(subtotal);
+        pedido.setDesconto(desconto);
+        pedido.setFrete(frete);
+        pedido.setTotal(total);
+        repo.salvar(pedido);
+        
+        // Enviar email de confirmação
+        EmailService emailService = new EmailService();
+        emailService.enviarConfirmacao(pedido.getCliente().getEmail(), pedido);
+        
+        // Atualizar estoque
+        for (Item item : pedido.getItens()) {
+            EstoqueService estoque = new EstoqueService();
+            estoque.reservar(item.getProdutoId(), item.getQuantidade());
+        }
+        
+        // Log da operação
+        System.out.println("Pedido " + pedido.getId() + " processado com sucesso!");
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- Código BOM -->
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Funções Extraídas</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class ProcessadorPedidos {
+    
+    public void processarPedido(Pedido pedido) {
+        validarPedido(pedido);
+        
+        double subtotal = calcularSubtotal(pedido);
+        double desconto = calcularDesconto(pedido, subtotal);
+        double frete = calcularFrete(pedido);
+        double total = calcularTotal(subtotal, desconto, frete);
+        
+        pedido.setSubtotal(subtotal);
+        pedido.setDesconto(desconto);
+        pedido.setFrete(frete);
+        pedido.setTotal(total);
+        
+        salvarPedido(pedido);
+        enviarConfirmacao(pedido);
+        atualizarEstoque(pedido);
+        
+        logSucesso(pedido);
+    }
+    
+    private void validarPedido(Pedido pedido) {
+        if (pedido == null) {
+            throw new IllegalArgumentException("Pedido não pode ser nulo");
+        }
+        if (pedido.getItens() == null || pedido.getItens().isEmpty()) {
+            throw new IllegalArgumentException("Pedido deve ter itens");
+        }
+        if (pedido.getCliente() == null) {
+            throw new IllegalArgumentException("Cliente não informado");
+        }
+    }
+    
+    private double calcularSubtotal(Pedido pedido) {
+        return pedido.getItens().stream()
+            .mapToDouble(i -> i.getPreco() * i.getQuantidade())
+            .sum();
+    }
+    
+    private double calcularDesconto(Pedido pedido, double subtotal) {
+        if (pedido.getCliente().isVip()) {
+            return subtotal * 0.15;
+        } else if (subtotal > 1000) {
+            return subtotal * 0.10;
+        } else if (subtotal > 500) {
+            return subtotal * 0.05;
+        }
+        return 0;
+    }
+    
+    private double calcularFrete(Pedido pedido) {
+        String estado = pedido.getCliente().getEstado();
+        return switch (estado) {
+            case "SP", "RJ" -> 15.0;
+            case "MG", "ES" -> 20.0;
+            default -> 30.0;
+        };
+    }
+    
+    private double calcularTotal(double subtotal, double desconto, double frete) {
+        double totalParcial = subtotal - desconto + frete;
+        return totalParcial + (totalParcial * 0.18);
+    }
+    
+    private void salvarPedido(Pedido pedido) {
+        new PedidoRepository().salvar(pedido);
+    }
+    
+    private void enviarConfirmacao(Pedido pedido) {
+        new EmailService().enviarConfirmacao(
+            pedido.getCliente().getEmail(), 
+            pedido
+        );
+    }
+    
+    private void atualizarEstoque(Pedido pedido) {
+        EstoqueService estoque = new EstoqueService();
+        for (Item item : pedido.getItens()) {
+            estoque.reservar(item.getProdutoId(), item.getQuantidade());
+        }
+    }
+    
+    private void logSucesso(Pedido pedido) {
+        System.out.println("Pedido " + pedido.getId() + " processado com sucesso!");
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- Refatorações -->
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Extract Method (Extrair Método)</h3>
+              <p class="refactoring-description">
+                Identifique blocos de código que realizam uma tarefa específica e extraia-os para 
+                métodos separados com nomes descritivos. Esta é a técnica principal para lidar com 
+                funções longas.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Temp with Query (Substituir Temporária por Query)</h3>
+              <p class="refactoring-description">
+                Substitua variáveis temporárias por métodos que calculam o valor quando necessário, 
+                reduzindo a complexidade do método principal.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Decompose Conditional (Decompor Condicional)</h3>
+              <p class="refactoring-description">
+                Extraia condições complexas e seus blocos correspondentes para métodos separados, 
+                tornando a lógica mais clara.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Loop with Pipeline (Substituir Loop por Pipeline)</h3>
+              <p class="refactoring-description">
+                Substitua loops complexos por operações de stream/lambda mais expressivas e concisas.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Diagrama -->
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📊</span>
+            Diagrama Ilustrativo
+          </h2>
+          <div class="diagram-container">
+            <svg class="diagram-svg" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+              <!-- Antes -->
+              <rect x="50" y="20" width="200" height="120" fill="#ef4444" opacity="0.2" rx="8"/>
+              <rect x="50" y="20" width="200" height="120" stroke="#ef4444" stroke-width="2" fill="none" rx="8"/>
+              <text x="150" y="45" text-anchor="middle" font-size="14" font-weight="bold" fill="#ef4444">ANTES</text>
+              <text x="150" y="70" text-anchor="middle" font-size="11" fill="#666">processarPedido()</text>
+              <text x="150" y="90" text-anchor="middle" font-size="10" fill="#888">• Validar</text>
+              <text x="150" y="105" text-anchor="middle" font-size="10" fill="#888">• Calcular</text>
+              <text x="150" y="120" text-anchor="middle" font-size="10" fill="#888">• Salvar</text>
+              
+              <!-- Seta -->
+              <line x1="260" y1="80" x2="300" y2="80" stroke="#f97316" stroke-width="2" marker-end="url(#arrowhead)"/>
+              
+              <!-- Depois -->
+              <rect x="320" y="20" width="80" height="40" fill="#22c55e" opacity="0.2" rx="6"/>
+              <rect x="320" y="20" width="80" height="40" stroke="#22c55e" stroke-width="2" fill="none" rx="6"/>
+              <text x="360" y="45" text-anchor="middle" font-size="10" fill="#22c55e">processar</text>
+              
+              <rect x="420" y="20" width="70" height="30" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="420" y="20" width="70" height="30" stroke="#3b82f6" stroke-width="2" fill="none" rx="6"/>
+              <text x="455" y="40" text-anchor="middle" font-size="9" fill="#3b82f6">validar()</text>
+              
+              <rect x="510" y="20" width="70" height="30" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="510" y="20" width="70" height="30" stroke="#3b82f6" stroke-width="2" fill="none" rx="6"/>
+              <text x="545" y="40" text-anchor="middle" font-size="9" fill="#3b82f6">calcular()</text>
+              
+              <rect x="420" y="60" width="70" height="30" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="420" y="60" width="70" height="30" stroke="#3b82f6" stroke-width="2" fill="none" rx="6"/>
+              <text x="455" y="80" text-anchor="middle" font-size="9" fill="#3b82f6">salvar()</text>
+              
+              <rect x="510" y="60" width="70" height="30" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="510" y="60" width="70" height="30" stroke="#3b82f6" stroke-width="2" fill="none" rx="6"/>
+              <text x="545" y="80" text-anchor="middle" font-size="9" fill="#3b82f6">enviar()</text>
+              
+              <!-- Arrow marker -->
+              <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+                </marker>
+              </defs>
+            </svg>
+            <p class="mt-2" style="color: var(--text-secondary); font-size: var(--text-sm);">
+              Uma função longa é dividida em várias funções menores e especializadas
+            </p>
+          </div>
+        </section>
+
+        <!-- Navegação -->
+        <nav class="detail-navigation">
+          <a href="duplicate-code.html" class="nav-btn nav-btn-prev" data-prev="duplicate-code.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Código Duplicado</span>
+          </a>
+          <a href="many-arguments.html" class="nav-btn nav-btn-next" data-next="many-arguments.html">
+            <span>Muitos Argumentos</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

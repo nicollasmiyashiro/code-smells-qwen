@@ -1,0 +1,38 @@
+# Dependências
+node_modules/
+
+# IDEs e Editores
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# Build e dist
+dist/
+build/
+
+# Arquivos temporários
+tmp/
+temp/
+
+# Cache
+.cache/
+*.cache
+
+# Arquivos de sistema
+Thumbs.db
+ehthumbs.db
+
+# Arquivos de compilação
+*.class
+*.pyc
+__pycache__/

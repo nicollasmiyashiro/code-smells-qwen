@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Data Clumps - Code Smell. Grupos de dados que aparecem juntos frequentemente mas não estão encapsulados.">
+  <title>Data Clumps - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>📊</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">📊</div>
+        <h1 class="smell-detail-title">Data Clumps</h1>
+        <p class="smell-detail-subtitle">Data Clumps / Grupos de Dados</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            <strong>Data Clumps</strong> ocorrem quando grupos de dados aparecem juntos repetidamente 
+            em várias partes do código, mas não estão encapsulados em uma estrutura própria.
+          </p>
+          <p class="mt-2">
+            Esses "agrupamentos" de dados são frequentemente passados como parâmetros juntos, 
+            armazenados em variáveis com nomes similares, ou aparecem como campos relacionados 
+            em classes diferentes.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Código duplicado:</strong> A mesma estrutura de dados é recriada em vários lugares.</li>
+            <li><strong>Acoplamento acidental:</strong> Dados relacionados não têm uma unidade clara.</li>
+            <li><strong>Dificuldade de mudança:</strong> Alterar a estrutura requer modificar múltiplos locais.</li>
+            <li><strong>Perda de comportamento:</strong> Dados sem classe não podem ter métodos relacionados.</li>
+            <li><strong>Validação repetida:</strong> Validações dos dados são duplicadas.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Variáveis com prefixos/sufixos similares (enderecoRua, enderecoNumero, enderecoCidade).</li>
+            <li>Parâmetros que sempre aparecem juntos em múltiplos métodos.</li>
+            <li>Campos similares em classes diferentes (nome, sobrenome, email em várias classes).</li>
+            <li>Arrays ou listas usadas para agrupar dados relacionados.</li>
+            <li>Comentários descrevendo relacionamentos entre campos separados.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Dados Agrupados</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class RelatorioService {
+    
+    public void gerarRelatorio(
+        String clienteNome,
+        String clienteEmail,
+        String clienteTelefone,
+        String enderecoRua,
+        String enderecoNumero,
+        String enderecoComplemento,
+        String enderecoBairro,
+        String enderecoCidade,
+        String enderecoEstado,
+        String enderecoCep,
+        double valorTotal,
+        double valorDesconto,
+        double valorFrete,
+        double valorImposto
+    ) {
+        // Usar dados do cliente
+        System.out.println("Cliente: " + clienteNome);
+        System.out.println("Email: " + clienteEmail);
+        System.out.println("Telefone: " + clienteTelefone);
+        
+        // Formatando endereço
+        String enderecoCompleto = enderecoRua + ", " + enderecoNumero;
+        if (enderecoComplemento != null) {
+            enderecoCompleto += " - " + enderecoComplemento;
+        }
+        enderecoCompleto += " - " + enderecoBairro;
+        enderecoCompleto += " - " + enderecoCidade + "/" + enderecoEstado;
+        enderecoCompleto += " - CEP: " + enderecoCep;
+        
+        // Calcular totais
+        double subtotal = valorTotal - valorDesconto;
+        double total = subtotal + valorFrete + valorImposto;
+        
+        // ... gerar relatório
+    }
+    
+    public void enviarPedido(
+        String clienteNome,
+        String clienteEmail,
+        String clienteTelefone,
+        String enderecoRua,
+        String enderecoNumero,
+        String enderecoComplemento,
+        String enderecoBairro,
+        String enderecoCidade,
+        String enderecoEstado,
+        String enderecoCep,
+        List<String> itens
+    ) {
+        // Mesmos dados de cliente e endereço repetidos!
+        // ...
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Classes de Valor</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Classe para dados do cliente
+public class Cliente {
+    private final String nome;
+    private final String email;
+    private final String telefone;
+    
+    public Cliente(String nome, String email, String telefone) {
+        this.nome = nome;
+        this.email = email;
+        this.telefone = telefone;
+    }
+    
+    // Getters
+    public String getNome() { return nome; }
+    public String getEmail() { return email; }
+    public String getTelefone() { return telefone; }
+}
+
+// Classe para endereço
+public class Endereco {
+    private final String rua;
+    private final String numero;
+    private final String complemento;
+    private final String bairro;
+    private final String cidade;
+    private final String estado;
+    private final String cep;
+    
+    public Endereco(String rua, String numero, String complemento,
+                    String bairro, String cidade, String estado, String cep) {
+        this.rua = rua;
+        this.numero = numero;
+        this.complemento = complemento;
+        this.bairro = bairro;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.cep = cep;
+    }
+    
+    public String formatarCompleto() {
+        StringBuilder sb = new StringBuilder(rua + ", " + numero);
+        if (complemento != null) {
+            sb.append(" - ").append(complemento);
+        }
+        sb.append(" - ").append(bairro);
+        sb.append(" - ").append(cidade).append("/").append(estado);
+        sb.append(" - CEP: ").append(cep);
+        return sb.toString();
+    }
+}
+
+// Classe para valores monetários
+public class ValoresPedido {
+    private final double total;
+    private final double desconto;
+    private final double frete;
+    private final double imposto;
+    
+    public double getSubtotal() {
+        return total - desconto;
+    }
+    
+    public double getTotalFinal() {
+        return getSubtotal() + frete + imposto;
+    }
+}
+
+// Uso limpo
+public class RelatorioService {
+    
+    public void gerarRelatorio(Cliente cliente, Endereco endereco, 
+                                ValoresPedido valores) {
+        System.out.println("Cliente: " + cliente.getNome());
+        System.out.println("Email: " + cliente.getEmail());
+        System.out.println("Endereço: " + endereco.formatarCompleto());
+        System.out.println("Total: R$ " + valores.getTotalFinal());
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Extract Class (Extrair Classe)</h3>
+              <p class="refactoring-description">
+                Crie uma nova classe para conter os dados que estão sempre juntos. Mova os campos 
+                e crie métodos úteis para manipular esses dados.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Parameter Object</h3>
+              <p class="refactoring-description">
+                Substitua parâmetros que aparecem juntos por um objeto que os contenha. Reduz a 
+                assinatura dos métodos.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Preserve Whole Object</h3>
+              <p class="refactoring-description">
+                Ao invés de passar valores individuais, passe o objeto inteiro que os contém.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Value Object Pattern</h3>
+              <p class="refactoring-description">
+                Crie objetos de valor imutáveis para representar conceitos do domínio. Adicione 
+                métodos de validação e formatação.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📊</span>
+            Diagrama Ilustrativo
+          </h2>
+          <div class="diagram-container">
+            <svg class="diagram-svg" viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+              <!-- Antes -->
+              <text x="150" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#ef4444">ANTES</text>
+              
+              <rect x="50" y="50" width="200" height="100" fill="#ef4444" opacity="0.1" rx="8"/>
+              <rect x="50" y="50" width="200" height="100" stroke="#ef4444" stroke-width="2" fill="none" rx="8"/>
+              
+              <text x="70" y="75" font-size="10" fill="#666">Método A:</text>
+              <text x="80" y="90" font-size="9" fill="#888">• nome, email, tel</text>
+              <text x="80" y="103" font-size="9" fill="#888">• rua, num, cid, est</text>
+              <text x="80" y="116" font-size="9" fill="#888">• total, desc, frete</text>
+              
+              <text x="70" y="135" font-size="10" fill="#666">Método B:</text>
+              <text x="80" y="150" font-size="9" fill="#888">• nome, email, tel</text>
+              <text x="80" y="163" font-size="9" fill="#888">• rua, num, cid, est</text>
+              
+              <!-- Seta -->
+              <line x1="260" y1="100" x2="300" y2="100" stroke="#f97316" stroke-width="2" marker-end="url(#arrowhead4)"/>
+              
+              <!-- Depois -->
+              <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#22c55e">DEPOIS</text>
+              
+              <rect x="350" y="50" width="100" height="35" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="350" y="50" width="100" height="35" stroke="#3b82f6" stroke-width="2" fill="none" rx="6"/>
+              <text x="400" y="72" text-anchor="middle" font-size="10" fill="#3b82f6">Cliente</text>
+              
+              <rect x="470" y="50" width="100" height="35" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="470" y="50" width="100" height="35" stroke="#3b82f6" stroke-width="2" fill="none" rx="6"/>
+              <text x="520" y="72" text-anchor="middle" font-size="10" fill="#3b82f6">Endereço</text>
+              
+              <rect x="410" y="100" width="100" height="35" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="410" y="100" width="100" height="35" stroke="#3b82f6" stroke-width="2" fill="none" rx="6"/>
+              <text x="460" y="122" text-anchor="middle" font-size="10" fill="#3b82f6">Valores</text>
+              
+              <rect x="350" y="150" width="200" height="40" fill="#22c55e" opacity="0.2" rx="6"/>
+              <rect x="350" y="150" width="200" height="40" stroke="#22c55e" stroke-width="2" fill="none" rx="6"/>
+              <text x="450" y="172" text-anchor="middle" font-size="10" fill="#22c55e">Método(Cliente, Endereço, Valores)</text>
+              
+              <defs>
+                <marker id="arrowhead4" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+                </marker>
+              </defs>
+            </svg>
+            <p class="mt-2" style="color: var(--text-secondary); font-size: var(--text-sm);">
+                Dados relacionados são encapsulados em classes coesas
+            </p>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="switch-statements.html" class="nav-btn nav-btn-prev" data-prev="switch-statements.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Switch Statements</span>
+          </a>
+          <a href="primitive-obsession.html" class="nav-btn nav-btn-next" data-next="primitive-obsession.html">
+            <span>Primitive Obsession</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

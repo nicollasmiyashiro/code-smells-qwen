@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Temporary Field - Code Smell. Campo de instância usado apenas em certas circunstâncias.">
+  <title>Campo Temporário - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>⏱️</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">⏱️</div>
+        <h1 class="smell-detail-title">Campo Temporário</h1>
+        <p class="smell-detail-subtitle">Temporary Field</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            Um <strong>Campo Temporário</strong> é um campo de instância que é usado apenas 
+            em certas circunstâncias ou em partes específicas do ciclo de vida do objeto. 
+            O resto do tempo, fica vazio ou null.
+          </p>
+          <p class="mt-2">
+            Este smell indica que o campo não pertence realmente à classe - ele é relevante 
+            apenas para um contexto específico e deveria estar em outro lugar.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Estado inconsistente:</strong> Objeto pode estar "incompleto".</li>
+            <li><strong>Null checks everywhere:</strong> Código cheio de verificações.</li>
+            <li><strong>Confusão:</strong> Quando o campo deve/m não deve estar preenchido?</li>
+            <li><strong>Memória desperdiçada:</strong> Espaço alocado para dados não usados.</li>
+            <li><strong>Erros de NullPointerException:</strong> Esquecer de verificar null.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Campos que são null na maioria das vezes.</li>
+            <li>Verificações de null antes de usar o campo.</li>
+            <li>Comentários como "só é preenchido durante X".</li>
+            <li>Métodos que setam o campo para null após uso.</li>
+            <li>Campos que só fazem sentido em um estado específico.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Campo Temporário</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class Pedido {
+    private Long id;
+    private Cliente cliente;
+    private List<Item> itens;
+    private double total;
+    
+    // Campo temporário - só usado durante cálculo
+    private Map<Long, Double> cacheDescontos;
+    
+    // Campo temporário - só usado para pedidos cancelados
+    private String motivoCancelamento;
+    private Date dataCancelamento;
+    private Usuario canceladoPor;
+    
+    // Campo temporário - só usado durante importação
+    private String arquivoOrigem;
+    private Integer linhaArquivo;
+    
+    public void calcularTotal() {
+        // Inicializa campo temporário
+        cacheDescontos = new HashMap<>();
+        
+        for (Item item : itens) {
+            double desconto = calcularDescontoItem(item);
+            cacheDescontos.put(item.getId(), desconto);
+        }
+        
+        // Usa cache...
+        
+        // Limpa campo temporário após uso
+        cacheDescontos = null;
+    }
+    
+    public void cancelar(String motivo, Usuario usuario) {
+        // Preenche campos só para cancelados
+        this.motivoCancelamento = motivo;
+        this.dataCancelamento = new Date();
+        this.canceladoPor = usuario;
+    }
+    
+    public double getDescontoItem(Long itemId) {
+        // Sempre precisa verificar null
+        if (cacheDescontos != null) {
+            return cacheDescontos.getOrDefault(itemId, 0.0);
+        }
+        return 0.0;
+    }
+    
+    public String getMotivoCancelamento() {
+        // Só faz sentido se cancelado
+        if (this.status != Status.CANCELADO) {
+            throw new IllegalStateException(
+                "Pedido não cancelado"
+            );
+        }
+        return motivoCancelamento;
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Campos Removidos</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Opção 1: Variável local ao invés de campo
+public class Pedido {
+    private Long id;
+    private Cliente cliente;
+    private List<Item> itens;
+    
+    public Dinheiro calcularTotal() {
+        // Variável local - existe apenas durante o método
+        Map<Long, Dinheiro> cacheDescontos = new HashMap<>();
+        
+        for (Item item : itens) {
+            double desconto = calcularDescontoItem(item);
+            cacheDescontos.put(item.getId(), Dinheiro.valueOf(desconto));
+        }
+        
+        return itens.stream()
+            .map(item -> item.getTotal().subtrair(
+                cacheDescontos.getOrDefault(item.getId(), Dinheiro.ZERO)
+            ))
+            .reduce(Dinheiro.ZERO, Dinheiro::adicionar);
+    }
+}
+
+// Opção 2: Classe separada para estado específico
+public class PedidoCancelado {
+    private final Pedido pedido;
+    private final String motivo;
+    private final Date dataCancelamento;
+    private final Usuario canceladoPor;
+    
+    public PedidoCancelado(Pedido pedido, String motivo, 
+                           Usuario canceladoPor) {
+        this.pedido = pedido;
+        this.motivo = motivo;
+        this.dataCancelamento = new Date();
+        this.canceladoPor = canceladoPor;
+    }
+    
+    public String getMotivo() { return motivo; }
+    public Date getDataCancelamento() { return dataCancelamento; }
+    public Usuario getCanceladoPor() { return canceladoPor; }
+}
+
+// Opção 3: Usar Optional para estado opcional
+public class Pedido {
+    private Optional<Cancelamento> cancelamento = Optional.empty();
+    
+    public void cancelar(String motivo, Usuario usuario) {
+        this.cancelamento = Optional.of(
+            new Cancelamento(motivo, usuario, new Date())
+        );
+    }
+    
+    public Optional<Cancelamento> getCancelamento() {
+        return cancelamento;
+    }
+    
+    public boolean isCancelado() {
+        return cancelamento.isPresent();
+    }
+}
+
+// Opção 4: Extrair para contexto de operação
+public class ImportacaoPedidoContext {
+    private final String arquivoOrigem;
+    private final int linhaArquivo;
+    
+    public Pedido importar() {
+        // Contexto tem os dados de importação
+        Pedido pedido = new Pedido();
+        // ... preencher pedido
+        return pedido;
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Field with Local Variable</h3>
+              <p class="refactoring-description">
+                Se o campo é usado apenas em um método, transforme-o em variável local.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Extract Class (Extrair Classe)</h3>
+              <p class="refactoring-description">
+                Mova campos temporários para uma classe separada que representa o estado específico.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Null Object</h3>
+              <p class="refactoring-description">
+                Use Optional ou Null Object para representar ausência de valor explicitamente.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace State-Altering Field with State Pattern</h3>
+              <p class="refactoring-description">
+                Se campos mudam com o estado, use o padrão State para representar estados diferentes.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="speculative-generality.html" class="nav-btn nav-btn-prev" data-prev="speculative-generality.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Generalidade Especulativa</span>
+          </a>
+          <a href="message-chain.html" class="nav-btn nav-btn-next" data-next="message-chain.html">
+            <span>Cadeia de Mensagens</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Shotgun Surgery - Code Smell. Mudança simples requer modificações em muitas classes diferentes.">
+  <title>Cirurgia de Escopeta - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>🔫</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">🔫</div>
+        <h1 class="smell-detail-title">Cirurgia de Escopeta</h1>
+        <p class="smell-detail-subtitle">Shotgun Surgery</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            <strong>Cirurgia de Escopeta</strong> ocorre quando uma mudança simples no sistema 
+            requer modificar muitas classes diferentes. Como um tiro de escopeta, a mudança 
+            "espalha" por todo o código.
+          </p>
+          <p class="mt-2">
+            Este é o oposto de "Divergent Change". Enquanto Divergent Change é uma classe que 
+            muda por muitos motivos, Shotgun Surgery é uma mudança que afeta muitas classes.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Alto risco:</strong> Fácil esquecer de atualizar alguma classe.</li>
+            <li><strong>Manutenção cara:</strong> Cada mudança exige muito trabalho.</li>
+            <li><strong>Bugs frequentes:</strong> Classes esquecidas causam erros.</li>
+            <li><strong>Desenvolvimento lento:</strong> Medo de mudar código.</li>
+            <li><strong>Testes frágeis:</strong> Muitos testes quebram com cada mudança.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Commit que modifica 10+ arquivos para uma feature pequena.</li>
+            <li>Comentários como "lembre-se de atualizar X, Y e Z também".</li>
+            <li>Constants duplicadas em várias classes.</li>
+            <li>Mesma mudança de lógica em múltiplos lugares.</li>
+            <li>Revisores de PR sempre pedindo "atualizou a classe X?".</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Mudança Espalhada</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Constante duplicada em várias classes
+public class RelatorioPDF {
+    private static final String IMPOSTO_ALIQUOTA = "18%";
+    
+    public void gerar() {
+        // Usa IMPOSTO_ALIQUOTA
+    }
+}
+
+public class RelatorioExcel {
+    private static final String IMPOSTO_ALIQUOTA = "18%";
+    
+    public void gerar() {
+        // Usa IMPOSTO_ALIQUOTA
+    }
+}
+
+public class CalculadoraImposto {
+    private static final double IMPOSTO_ALIQUOTA = 0.18;
+    
+    public double calcular(double valor) {
+        return valor * IMPOSTO_ALIQUOTA;
+    }
+}
+
+public class NotaFiscal {
+    private static final double ALIQUOTA_IMPOSTO = 0.18;
+    
+    public double getValorImposto() {
+        return getTotal() * ALIQUOTA_IMPOSTO;
+    }
+}
+
+public class SimuladorPreco {
+    private static final double TAXA_IMPOSTO = 0.18;
+    
+    public double simular(double custo) {
+        return custo + (custo * TAXA_IMPOSTO);
+    }
+}
+
+// Para mudar a alíquota de 18% para 20%:
+// 1. Editar RelatorioPDF
+// 2. Editar RelatorioExcel
+// 3. Editar CalculadoraImposto
+// 4. Editar NotaFiscal
+// 5. Editar SimuladorPreco
+// 6. Torcer para não esquecer nenhum!</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Mudança Centralizada</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Configuração centralizada
+public class ConfiguracaoTributaria {
+    
+    private static ConfiguracaoTributaria instancia;
+    private double aliquotaIcms = 0.18;
+    private double aliquotaIpi = 0.05;
+    private double aliquotaPis = 0.0065;
+    private double aliquotaCofins = 0.03;
+    
+    private ConfiguracaoTributaria() {}
+    
+    public static ConfiguracaoTributaria getInstancia() {
+        if (instancia == null) {
+            instancia = new ConfiguracaoTributaria();
+        }
+        return instancia;
+    }
+    
+    public double getAliquotaIcms() { return aliquotaIcms; }
+    public double getAliquotaIpi() { return aliquotaIpi; }
+    public double getAliquotaPis() { return aliquotaPis; }
+    public double getAliquotaCofins() { return aliquotaCofins; }
+    
+    public double getAliquotaTotal() {
+        return aliquotaIcms + aliquotaIpi + aliquotaPis + aliquotaCofins;
+    }
+    
+    // Pode carregar de arquivo de configuração
+    public void carregarDeArquivo(String path) {
+        // Carrega configurações
+    }
+}
+
+// Classes usam configuração centralizada
+public class CalculadoraImposto {
+    
+    public Dinheiro calcular(Dinheiro valor) {
+        double aliquota = ConfiguracaoTributaria
+            .getInstancia()
+            .getAliquotaTotal();
+        return valor.multiplicar(aliquota);
+    }
+}
+
+public class NotaFiscal {
+    
+    public Dinheiro getValorImposto() {
+        return getTotal().multiplicar(
+            ConfiguracaoTributaria.getInstancia().getAliquotaTotal()
+        );
+    }
+}
+
+// Para mudar a alíquota:
+// 1. Editar apenas ConfiguracaoTributaria
+// 2. Ou carregar novo arquivo de configuração
+// 3. Todas as classes usam automaticamente o novo valor!</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Consolidate Duplicate Conditional Fragments</h3>
+              <p class="refactoring-description">
+                Mova lógica duplicada para um único método e chame de todos os lugares.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Configuration Class</h3>
+              <p class="refactoring-description">
+                Centralize valores e configurações em uma classe dedicada.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Magic Number with Constant</h3>
+              <p class="refactoring-description">
+                Substitua valores literais por constantes centralizadas.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Strategy Pattern</h3>
+              <p class="refactoring-description">
+                Para comportamentos que variam, use Strategy para centralizar a variação.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="scattered-data.html" class="nav-btn nav-btn-prev" data-prev="scattered-data.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Dados Espalhados</span>
+          </a>
+          <a href="parallel-inheritance.html" class="nav-btn nav-btn-next" data-next="parallel-inheritance.html">
+            <span>Herança Paralela</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

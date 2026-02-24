@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Middle Man - Code Smell. Classe que apenas delega chamadas para outra classe.">
+  <title>Homem do Meio - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>👤</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">👤</div>
+        <h1 class="smell-detail-title">Homem do Meio</h1>
+        <p class="smell-detail-subtitle">Middle Man</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            O code smell <strong>Homem do Meio</strong> ocorre quando uma classe existe apenas 
+            para delegar chamadas para outra classe. Ela não adiciona nenhum comportamento ou 
+            valor, apenas repassa mensagens.
+          </p>
+          <p class="mt-2">
+            Este é o oposto do code smell "Feature Envy". Enquanto Feature Envy move métodos 
+            para onde os dados estão, Middle Man remove classes que são apenas intermediárias 
+            desnecessárias.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Complexidade desnecessária:</strong> Mais uma classe para entender.</li>
+            <li><strong>Acoplamento indireto:</strong> Dependência oculta através do intermediário.</li>
+            <li><strong>Manutenção extra:</strong> Mudanças na classe real exigem mudar o intermediário.</li>
+            <li><strong>Performance:</strong> Chamadas extras sem benefício.</li>
+            <li><strong>Confusão:</strong> Não está claro qual classe usar.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Métodos que apenas chamam método equivalente em outro objeto.</li>
+            <li>Classe onde mais de 50% dos métodos são delegações.</li>
+            <li>Nomes como "XWrapper", "XAdapter", "XProxy" sem lógica adicional.</li>
+            <li>Construtor que apenas recebe e armazena referência.</li>
+            <li>Interface idêntica à classe delegada.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Classe Intermediária</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Classe real com toda a lógica
+public class ServicoPagamento {
+    
+    public boolean processar(Pagamento pagamento) {
+        // Lógica complexa de processamento
+        validarPagamento(pagamento);
+        conectarGateway();
+        enviarTransacao(pagamento);
+        return confirmarTransacao();
+    }
+    
+    public Estorno estornar(String transacaoId) {
+        // Lógica de estorno
+    }
+    
+    public Status consultarStatus(String transacaoId) {
+        // Consulta status
+    }
+    
+    public Relatorio gerarRelatorio(Date inicio, Date fim) {
+        // Gera relatório
+    }
+}
+
+// Homem do meio - apenas delega
+public class GerenciadorPagamento {
+    
+    private ServicoPagamento servico;
+    
+    public GerenciadorPagamento(ServicoPagamento servico) {
+        this.servico = servico;
+    }
+    
+    // Apenas delega - não adiciona nada!
+    public boolean processar(Pagamento pagamento) {
+        return servico.processar(pagamento);
+    }
+    
+    // Apenas delega
+    public Estorno estornar(String transacaoId) {
+        return servico.estornar(transacaoId);
+    }
+    
+    // Apenas delega
+    public Status consultarStatus(String transacaoId) {
+        return servico.consultarStatus(transacaoId);
+    }
+    
+    // Apenas delega
+    public Relatorio gerarRelatorio(Date inicio, Date fim) {
+        return servico.gerarRelatorio(inicio, fim);
+    }
+    
+    // Getter que expõe o serviço real
+    public ServicoPagamento getServico() {
+        return servico;
+    }
+}
+
+// Uso confuso
+public class PedidoService {
+    
+    public void finalizarPedido(Pedido pedido) {
+        // Qual usar? Gerenciador ou Servico?
+        GerenciadorPagamento gerenciador = new GerenciadorPagamento(servico);
+        gerenciador.processar(pedido.getPagamento());
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Eliminando Intermediário</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Usa a classe real diretamente
+public class PedidoService {
+    
+    private ServicoPagamento servicoPagamento;
+    
+    // Injeção de dependência direta
+    public PedidoService(ServicoPagamento servicoPagamento) {
+        this.servicoPagamento = servicoPagamento;
+    }
+    
+    public void finalizarPedido(Pedido pedido) {
+        // Uso direto, sem intermediário
+        servicoPagamento.processar(pedido.getPagamento());
+    }
+    
+    public void estornarPedido(Pedido pedido) {
+        servicoPagamento.estornar(pedido.getTransacaoId());
+    }
+}
+
+// Se precisar de abstração, use interface
+public interface ProcessadorPagamento {
+    boolean processar(Pagamento pagamento);
+    Estorno estornar(String transacaoId);
+}
+
+public class ServicoPagamento implements ProcessadorPagamento {
+    
+    @Override
+    public boolean processar(Pagamento pagamento) {
+        // Implementação real
+    }
+    
+    @Override
+    public Estorno estornar(String transacaoId) {
+        // Implementação real
+    }
+}
+
+// Se realmente precisar de wrapper, adicione valor
+public class ServicoPagamentoComCache implements ProcessadorPagamento {
+    
+    private ProcessadorPagamento servico;
+    private Cache cache;
+    
+    // Adiciona comportamento de cache
+    @Override
+    public boolean processar(Pagamento pagamento) {
+        if (cache.temCache(pagamento.getId())) {
+            return cache.get(pagamento.getId());
+        }
+        boolean resultado = servico.processar(pagamento);
+        cache.put(pagamento.getId(), resultado);
+        return resultado;
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Remove Middle Man (Remover Homem do Meio)</h3>
+              <p class="refactoring-description">
+                Elimine a classe intermediária e faça os clientes chamarem a classe real diretamente.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Delegation with Inheritance</h3>
+              <p class="refactoring-description">
+                Se a delegação é necessária, considere usar herança ao invés de composição.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Add Value to Wrapper</h3>
+              <p class="refactoring-description">
+                Se o wrapper é necessário, adicione comportamento adicional que justifique sua existência.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Use Interface</h3>
+              <p class="refactoring-description">
+                Se precisa de abstração, use interfaces ao invés de wrappers vazios.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="message-chain.html" class="nav-btn nav-btn-prev" data-prev="message-chain.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Cadeia de Mensagens</span>
+          </a>
+          <a href="insufficient-modularization.html" class="nav-btn nav-btn-next" data-next="insufficient-modularization.html">
+            <span>Modularização Insuficiente</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

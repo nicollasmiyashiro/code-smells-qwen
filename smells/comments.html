@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Comentários Excessivos - Code Smell. Código que precisa de comentários para ser entendido.">
+  <title>Comentários Excessivos - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>💬</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">💬</div>
+        <h1 class="smell-detail-title">Comentários Excessivos</h1>
+        <p class="smell-detail-subtitle">Comments</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            O code smell <strong>Comentários Excessivos</strong> não significa que comentários 
+            são ruins. Significa que o código está tão pouco claro que precisa de comentários 
+            extensivos para ser entendido.
+          </p>
+          <p class="mt-2">
+            Como diz Kent Beck: "O melhor comentário é um método bem nomeado". Comentários muitas 
+            vezes são usados como curativo para código mal escrito, ao invés de refatorar o código 
+            para ser autoexplicativo.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Comentários desatualizados:</strong> Código muda, comentários não.</li>
+            <li><strong>Ilusão de clareza:</strong> Comentários dão falsa sensação de código claro.</li>
+            <li><strong>Ruído visual:</strong> Excesso de comentários dificulta leitura.</li>
+            <li><strong>Manutenção dupla:</strong> Precisa manter código E comentários sincronizados.</li>
+            <li><strong>Código obscuro:</strong> Comentários mascaram complexidade do código.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Comentários explicando o que o código faz (ao invés de porquê).</li>
+            <li>Blocos grandes de código comentado.</li>
+            <li>Comentários de cabeçalho em cada método.</li>
+            <li>Comentários que repetem o óbvio.</li>
+            <li>Comentários marcando seções ("// Região de cálculo").</li>
+            <li>Comentários apologéticos ("// Gambiarra temporária").</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Comentários Excessivos</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class Processador {
+    
+    // Método para calcular o total do pedido
+    // Autor: João Silva
+    // Data: 15/03/2024
+    public double calcularTotal(Pedido p) {
+        // Variável para armazenar o subtotal
+        double subtotal = 0;
+        
+        // Loop para iterar sobre todos os itens
+        for (int i = 0; i < p.getItens().size(); i++) {
+            // Pega o item na posição i
+            Item item = p.getItens().get(i);
+            
+            // Calcula o total do item (preço * quantidade)
+            double totalItem = item.getPreco() * item.getQuantidade();
+            
+            // Soma ao subtotal
+            subtotal = subtotal + totalItem;
+        }
+        
+        // Verifica se tem desconto
+        double desconto = 0;
+        if (p.getCliente().isVip()) {
+            // Cliente VIP ganha 15% de desconto
+            desconto = subtotal * 0.15;
+        } else if (subtotal > 1000) {
+            // Pedidos acima de 1000 ganham 10%
+            desconto = subtotal * 0.10;
+        }
+        
+        // Calcula o frete baseado no estado
+        double frete = 0;
+        // Estado do cliente
+        String estado = p.getCliente().getEstado();
+        
+        // SP e RJ têm frete mais barato
+        if (estado.equals("SP") || estado.equals("RJ")) {
+            frete = 15.0;
+        } else if (estado.equals("MG") || estado.equals("ES")) {
+            // MG e ES têm frete médio
+            frete = 20.0;
+        } else {
+            // Outros estados têm frete mais caro
+            frete = 30.0;
+        }
+        
+        // Retorna o total final
+        return subtotal - desconto + frete;
+    }
+    
+    // TODO: Implementar validação de estoque
+    // FIXME: Bug quando quantidade é negativa
+    // HACK: Gambiarra para funcionar com sistema legado
+    // XXX: Isso precisa ser refatorado urgentemente
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Código Autoexplicativo</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class ProcessadorPedidos {
+    
+    public Dinheiro calcularTotalPedido(Pedido pedido) {
+        Dinheiro subtotal = calcularSubtotal(pedido);
+        Dinheiro desconto = calcularDesconto(pedido, subtotal);
+        Dinheiro frete = calcularFrete(pedido);
+        
+        return subtotal.subtrair(desconto).adicionar(frete);
+    }
+    
+    private Dinheiro calcularSubtotal(Pedido pedido) {
+        return pedido.getItens().stream()
+            .map(this::calcularTotalItem)
+            .reduce(Dinheiro.ZERO, Dinheiro::adicionar);
+    }
+    
+    private Dinheiro calcularTotalItem(Item item) {
+        return item.getPreco().multiplicar(item.getQuantidade());
+    }
+    
+    private Dinheiro calcularDesconto(Pedido pedido, Dinheiro subtotal) {
+        if (pedido.getCliente().isVip()) {
+            return subtotal.multiplicar(0.15);
+        }
+        if (subtotal.ehMaiorQue(new Dinheiro(1000))) {
+            return subtotal.multiplicar(0.10);
+        }
+        return Dinheiro.ZERO;
+    }
+    
+    private Dinheiro calcularFrete(Pedido pedido) {
+        String estado = pedido.getCliente().getEstado();
+        
+        if (Regiao.SUDESTE.contains(estado)) {
+            return new Dinheiro(15.0);
+        }
+        if (Regiao.SUDESTE_EXTENDIDO.contains(estado)) {
+            return new Dinheiro(20.0);
+        }
+        return new Dinheiro(30.0);
+    }
+}
+
+// Comentários são úteis para explicar o PORQUÊ, não o COMO:
+
+/**
+ * Usa a regra de desconto da promoção de verão 2024.
+ * Ver ticket #1234 para detalhes da regra de negócio.
+ */
+public class PromocaoVerao2024 {
+    // ...
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Explaining Variable (Introduzir Variável Explicativa)</h3>
+              <p class="refactoring-description">
+                Substitua expressões complexas por variáveis bem nomeadas que explicam seu propósito.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Rename Method (Renomear Método)</h3>
+              <p class="refactoring-description">
+                Renomeie métodos para que seu propósito seja claro sem necessidade de comentários.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Extract Method (Extrair Método)</h3>
+              <p class="refactoring-description">
+                Extraia blocos de código para métodos com nomes que explicam a intenção.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Comment with Assertion</h3>
+              <p class="refactoring-description">
+                Substitua comentários sobre condições esperadas por assertions ou validações.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📊</span>
+            Quando Comentários São Úteis
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Explicar intenção (porquê):</strong> Por que esta abordagem foi escolhida.</li>
+            <li><strong>Referências externas:</strong> Links para documentação, tickets, decisões.</li>
+            <li><strong>Avisos de consequências:</strong> "Não remova esta linha, causa X".</li>
+            <li><strong>TODOs e FIXMEs:</strong> Trabalho pendente identificado.</li>
+            <li><strong>Javadoc de API pública:</strong> Documentação para consumidores da API.</li>
+            <li><strong>Explicar workarounds:</strong> Soluções temporárias ou gambiarras necessárias.</li>
+          </ul>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="refused-bequest.html" class="nav-btn nav-btn-prev" data-prev="refused-bequest.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Herança Recusada</span>
+          </a>
+          <a href="duplicate-code.html" class="nav-btn nav-btn-next" data-next="duplicate-code.html">
+            <span>Código Duplicado</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

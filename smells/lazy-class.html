@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Lazy Class - Code Smell. Classe que não faz o suficiente e deveria ser eliminada ou fundida.">
+  <title>Classe Preguiçosa - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>😴</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">😴</div>
+        <h1 class="smell-detail-title">Classe Preguiçosa</h1>
+        <p class="smell-detail-subtitle">Lazy Class / Freeloader</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            Uma <strong>Classe Preguiçosa</strong> (também chamada de "Freeloader") é uma 
+            classe que não faz o suficiente para justificar sua existência. Ela tem poucos 
+            métodos, poucos dados, e não representa um conceito significativo.
+          </p>
+          <p class="mt-2">
+            Este é o oposto de "Large Class". Enquanto classes grandes fazem demais, classes 
+            preguiçosas fazem de menos e deveriam ser eliminadas ou fundidas com outras.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Complexidade desnecessária:</strong> Mais uma classe para entender.</li>
+            <li><strong>Indireção inútil:</strong> Camada extra sem valor agregado.</li>
+            <li><strong>Manutenção desperdiçada:</strong> Tempo gasto mantendo classe inútil.</li>
+            <li><strong>Confusão:</strong> Desenvolvedores não entendem o propósito.</li>
+            <li><strong>Performance:</strong> Objetos extras alocados sem necessidade.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Classe com menos de 5 métodos e 3 campos.</li>
+            <li>Classe que só tem getters/setters e nada mais.</li>
+            <li>Subclasse que não adiciona nada à classe pai.</li>
+            <li>Classe que foi reduzida após refatorações.</li>
+            <li>Nomes vagos como "Helper", "Data", "Info".</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Classe Preguiçosa</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Classe que não faz nada útil sozinha
+public class EnderecoInfo {
+    private String rua;
+    private String numero;
+    private String cidade;
+    private String estado;
+    
+    // Apenas getters e setters
+    public String getRua() { return rua; }
+    public void setRua(String rua) { this.rua = rua; }
+    
+    public String getNumero() { return numero; }
+    public void setNumero(String numero) { this.numero = numero; }
+    
+    public String getCidade() { return cidade; }
+    public void setCidade(String cidade) { this.cidade = cidade; }
+    
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+}
+
+// Classe que usa EnderecoInfo
+public class Cliente {
+    private String nome;
+    private String email;
+    private EnderecoInfo endereco;
+    
+    public Cliente(String nome, String email, EnderecoInfo endereco) {
+        this.nome = nome;
+        this.email = email;
+        this.endereco = endereco;
+    }
+    
+    // Métodos que apenas delegam
+    public String getRua() {
+        return endereco.getRua();
+    }
+    
+    public String getCidade() {
+        return endereco.getCidade();
+    }
+}
+
+// Uso desnecessariamente complexo
+public class ClienteService {
+    
+    public void cadastrarCliente(
+        String nome,
+        String email,
+        String rua,
+        String numero,
+        String cidade,
+        String estado
+    ) {
+        // Cria objeto intermediário desnecessário
+        EnderecoInfo endereco = new EnderecoInfo();
+        endereco.setRua(rua);
+        endereco.setNumero(numero);
+        endereco.setCidade(cidade);
+        endereco.setEstado(estado);
+        
+        Cliente cliente = new Cliente(nome, email, endereco);
+        repository.salvar(cliente);
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Classe Eliminada</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Opção 1: Mover dados para a classe principal
+public class Cliente {
+    private final String nome;
+    private final String email;
+    private final String rua;
+    private final String numero;
+    private final String cidade;
+    private final String estado;
+    
+    public Cliente(String nome, String email, String rua, 
+                   String numero, String cidade, String estado) {
+        this.nome = nome;
+        this.email = email;
+        this.rua = rua;
+        this.numero = numero;
+        this.cidade = cidade;
+        this.estado = estado;
+    }
+    
+    public String getEnderecoFormatado() {
+        return String.format("%s, %s - %s/%s", rua, numero, cidade, estado);
+    }
+}
+
+// Opção 2: Usar Record (Java 16+)
+public record Cliente(
+    String nome,
+    String email,
+    String rua,
+    String numero,
+    String cidade,
+    String estado
+) {
+    public String getEnderecoFormatado() {
+        return String.format("%s, %s - %s/%s", rua, numero, cidade, estado);
+    }
+}
+
+// Opção 3: Se Endereco tem comportamento, mantenha como Value Object
+public class Endereco {
+    private final String rua;
+    private final String numero;
+    private final String cidade;
+    private final String estado;
+    private final String cep;
+    
+    public Endereco(String rua, String numero, String cidade, 
+                    String estado, String cep) {
+        this.rua = rua;
+        this.numero = numero;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.cep = cep;
+    }
+    
+    public String formatar() {
+        return String.format("%s, %s - %s/%s CEP: %s", 
+            rua, numero, cidade, estado, cep);
+    }
+    
+    public boolean isMesmaCidade(Endereco outro) {
+        return this.cidade.equals(outro.cidade);
+    }
+}
+
+// Uso simplificado
+public class ClienteService {
+    
+    public void cadastrarCliente(
+        String nome,
+        String email,
+        String rua,
+        String numero,
+        String cidade,
+        String estado
+    ) {
+        // Direto, sem intermediário desnecessário
+        Cliente cliente = new Cliente(nome, email, rua, numero, cidade, estado);
+        repository.salvar(cliente);
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Inline Class (Classe Inline)</h3>
+              <p class="refactoring-description">
+                Mova todos os membros da classe preguiçosa para outra classe e elimine-a.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Collapse Hierarchy (Colapsar Hierarquia)</h3>
+              <p class="refactoring-description">
+                Se é uma subclasse vazia, remova-a e use a classe pai diretamente.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Add Behavior or Remove</h3>
+              <p class="refactoring-description">
+                Ou adicione comportamento que justifique a classe, ou elimine-a.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Use Record/Value Type</h3>
+              <p class="refactoring-description">
+                Para classes que são apenas dados, use records ou tipos de valor.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="parallel-inheritance.html" class="nav-btn nav-btn-prev" data-prev="parallel-inheritance.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Herança Paralela</span>
+          </a>
+          <a href="speculative-generality.html" class="nav-btn nav-btn-next" data-next="speculative-generality.html">
+            <span>Generalidade Especulativa</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Broken Encapsulation - Code Smell. Acesso direto a dados internos, expondo implementação.">
+  <title>Encapsulamento Quebrado - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>🔓</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">🔓</div>
+        <h1 class="smell-detail-title">Encapsulamento Quebrado</h1>
+        <p class="smell-detail-subtitle">Broken Encapsulation</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            <strong>Encapsulamento Quebrado</strong> ocorre quando uma classe expõe seus dados 
+            internos ou detalhes de implementação, permitindo que código externo modifique seu 
+            estado diretamente.
+          </p>
+          <p class="mt-2">
+            O encapsulamento é um dos pilares da orientação a objetos. Quando quebrado, a classe 
+            perde controle sobre seu estado e invariantes, tornando-se frágil e difícil de manter.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Invariantes violados:</strong> Estado interno pode ficar inconsistente.</li>
+            <li><strong>Acoplamento forte:</strong> Código externo depende da implementação interna.</li>
+            <li><strong>Efeitos colaterais:</strong> Mudanças externas causam bugs inesperados.</li>
+            <li><strong>Refatoração difícil:</strong> Mudar implementação quebra código externo.</li>
+            <li><strong>Thread safety comprometida:</strong> Múltiplos threads podem corromper estado.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Campos públicos ou protected.</li>
+            <li>Getters que retornam coleções mutáveis diretamente.</li>
+            <li>Getters que retornam objetos mutáveis internos.</li>
+            <li>Setters que permitem qualquer valor sem validação.</li>
+            <li>Código externo modificando estado interno diretamente.</li>
+            <li>Constants classes com campos públicos estáticos.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Encapsulamento Quebrado</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class Pedido {
+    // Campos públicos - acesso direto permitido
+    public Long id;
+    public String status;
+    public double total;
+    
+    // Coleção exposta diretamente
+    public List<Item> itens = new ArrayList<>();
+    
+    // Getter que expõe objeto interno mutável
+    public Map<String, Object> getMetadados() {
+        return metadados; // Retorna referência direta!
+    }
+    
+    private Map<String, Object> metadados = new HashMap<>();
+    
+    // Setter sem validação
+    public void setStatus(String status) {
+        this.status = status; // Qualquer valor é aceito
+    }
+    
+    // Getter de coleção permite modificação externa
+    public List<Item> getItens() {
+        return itens; // Retorna lista interna!
+    }
+}
+
+// Código externo pode quebrar o objeto
+public class ClienteService {
+    
+    public void manipularPedido(Pedido pedido) {
+        // Modificação direta de campo público
+        pedido.total = -100; // Total negativo!
+        
+        // Adiciona item nulo na coleção
+        pedido.itens.add(null);
+        
+        // Modifica mapa interno
+        pedido.getMetadados().put("chave", null);
+        
+        // Status inválido
+        pedido.setStatus("STATUS_INVALIDO_XPTO");
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Encapsulamento Preservado</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class Pedido {
+    private final Long id;
+    private StatusPedido status;
+    private final List<Item> itens;
+    private final Map<String, Object> metadados;
+    private Dinheiro total;
+    
+    public Pedido(Long id) {
+        this.id = id;
+        this.status = StatusPedido.CRIADO;
+        this.itens = new ArrayList<>();
+        this.metadados = new HashMap<>();
+        this.total = Dinheiro.ZERO;
+    }
+    
+    // Getter seguro - retorna cópia ou vista imutável
+    public List<Item> getItens() {
+        return Collections.unmodifiableList(itens);
+    }
+    
+    // Método de comportamento ao invés de setter
+    public void adicionarItem(Item item) {
+        Objects.requireNonNull(item, "Item não pode ser nulo");
+        validarStatusParaAdicao();
+        itens.add(item);
+        recalcularTotal();
+    }
+    
+    public void removerItem(Long itemId) {
+        itens.removeIf(i -> i.getId().equals(itemId));
+        recalcularTotal();
+    }
+    
+    // Setter com validação
+    public void cancelar() {
+        if (status != StatusPedido.CRIADO && status != StatusPedido.PENDENTE) {
+            throw new IllegalStateException(
+                "Só é possível cancelar pedidos criados ou pendentes"
+            );
+        }
+        this.status = StatusPedido.CANCELADO;
+    }
+    
+    // Getter seguro para mapa - retorna cópia
+    public Map<String, Object> getMetadados() {
+        return new HashMap<>(metadados); // Cópia defensiva
+    }
+    
+    public void adicionarMetadado(String chave, Object valor) {
+        Objects.requireNonNull(chave, "Chave não pode ser nula");
+        metadados.put(chave, valor);
+    }
+    
+    public Dinheiro getTotal() {
+        return total; // Retorna objeto imutável
+    }
+    
+    public StatusPedido getStatus() {
+        return status; // Retorna enum (imutável)
+    }
+    
+    private void validarStatusParaAdicao() {
+        if (status == StatusPedido.FINALIZADO) {
+            throw new IllegalStateException(
+                "Não é possível adicionar itens a pedido finalizado"
+            );
+        }
+    }
+    
+    private void recalcularTotal() {
+        this.total = itens.stream()
+            .map(Item::getTotal)
+            .reduce(Dinheiro.ZERO, Dinheiro::adicionar);
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Encapsulate Field (Encapsular Campo)</h3>
+              <p class="refactoring-description">
+                Torne campos privados e forneça getters/setters controlados.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Return Copy Instead of Reference</h3>
+              <p class="refactoring-description">
+                Retorne cópias defensivas de objetos mutáveis ao invés de referências diretas.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Setter with Method</h3>
+              <p class="refactoring-description">
+                Substitua setters genéricos por métodos com nomes que expressam intenção.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Make Immutable (Tornar Imutável)</h3>
+              <p class="refactoring-description">
+                Quando possível, torne objetos imutáveis para eliminar problemas de modificação.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="insufficient-modularization.html" class="nav-btn nav-btn-prev" data-prev="insufficient-modularization.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Modularização Insuficiente</span>
+          </a>
+          <a href="alternate-classes.html" class="nav-btn nav-btn-next" data-next="alternate-classes.html">
+            <span>Classes Alternadas</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

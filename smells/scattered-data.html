@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Scattered Data - Code Smell. Dados relacionados espalhados por várias classes sem unidade.">
+  <title>Dados Espalhados - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>🌪️</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">🌪️</div>
+        <h1 class="smell-detail-title">Dados Espalhados</h1>
+        <p class="smell-detail-subtitle">Scattered Data</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            <strong>Dados Espalhados</strong> ocorre quando dados que deveriam estar juntos 
+            estão espalhados por várias classes. Diferente de "Data Clumps" (onde os dados 
+            viajam juntos mas não estão encapsulados), aqui os dados estão em lugares 
+            fundamentalmente diferentes.
+          </p>
+          <p class="mt-2">
+            Este smell torna difícil entender e manter o código, pois mudanças em um conceito 
+            do domínio exigem modificar múltiplas classes não relacionadas.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Consistência difícil:</strong> Manter dados sincronizados é complexo.</li>
+            <li><strong>Validação fragmentada:</strong> Validações em múltiplos lugares.</li>
+            <li><strong>Entendimento prejudicado:</strong> Conceito único espalhado.</li>
+            <li><strong>Acoplamento oculto:</strong> Classes parecem independentes mas não são.</li>
+            <li><strong>Transações complexas:</strong> Atualizar todos os dados atomicamente.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Campos com nomes similares em classes diferentes (ex: precoX, precoY).</li>
+            <li>Grupos de campos que sempre são atualizados juntos.</li>
+            <li>Comentários como "não esquecer de atualizar X quando mudar Y".</li>
+            <li>Métodos que recebem múltiplos parâmetros relacionados de classes diferentes.</li>
+            <li>Dados duplicados que devem estar sincronizados.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Dados Espalhados</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Dados de endereço espalhados
+public class Cliente {
+    private String nome;
+    private String email;
+    // Endereço parcial
+    private String rua;
+    private String numero;
+}
+
+public class Pedido {
+    private Long id;
+    private Cliente cliente;
+    // Mais dados de endereço para entrega
+    private String enderecoEntregaRua;
+    private String enderecoEntregaNumero;
+    private String enderecoEntregaComplemento;
+    private String enderecoEntregaBairro;
+    private String enderecoEntregaCidade;
+    private String enderecoEntregaEstado;
+    private String enderecoEntregaCep;
+}
+
+public class NotaFiscal {
+    private Long numero;
+    // Dados de endereço para emissão
+    private String enderecoClienteRua;
+    private String enderecoClienteNumero;
+    private String enderecoClienteBairro;
+    private String enderecoClienteCidade;
+    private String enderecoClienteEstado;
+}
+
+// Atualização manual e propensa a erros
+public class EnderecoService {
+    
+    public void atualizarEndereco(
+        Cliente cliente,
+        String rua,
+        String numero,
+        String complemento,
+        String bairro,
+        String cidade,
+        String estado,
+        String cep
+    ) {
+        // Atualiza Cliente
+        cliente.setRua(rua);
+        cliente.setNumero(numero);
+        
+        // Atualiza todos os pedidos do cliente
+        for (Pedido pedido : pedidoRepository.findByCliente(cliente)) {
+            pedido.setEnderecoEntregaRua(rua);
+            pedido.setEnderecoEntregaNumero(numero);
+            pedido.setEnderecoEntregaComplemento(complemento);
+            pedido.setEnderecoEntregaBairro(bairro);
+            pedido.setEnderecoEntregaCidade(cidade);
+            // ...
+        }
+        
+        // E se esquecer de atualizar NotaFiscal?
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Dados Consolidados</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Classe de valor para Endereço
+public class Endereco {
+    private final String rua;
+    private final String numero;
+    private final String complemento;
+    private final String bairro;
+    private final String cidade;
+    private final String estado;
+    private final String cep;
+    
+    // Construtor, getters, equals, hashCode
+    
+    public String formatarCompleto() {
+        return String.format("%s, %s - %s, %s - %s, %s",
+            rua, numero, bairro, cidade, estado, cep);
+    }
+}
+
+// Cliente com endereço consolidado
+public class Cliente {
+    private final String nome;
+    private final String email;
+    private final Endereco endereco;
+    
+    public Endereco getEndereco() {
+        return endereco; // Retorna objeto imutável
+    }
+}
+
+// Pedido referencia o endereço
+public class Pedido {
+    private final Long id;
+    private final Cliente cliente;
+    private final Endereco enderecoEntrega;
+    
+    public Endereco getEnderecoEntrega() {
+        return enderecoEntrega != null 
+            ? enderecoEntrega 
+            : cliente.getEndereco();
+    }
+}
+
+// NotaFiscal referencia o endereço
+public class NotaFiscal {
+    private final Long numero;
+    private final Endereco enderecoCliente;
+}
+
+// Atualização simples e segura
+public class EnderecoService {
+    
+    public void atualizarEndereco(Cliente cliente, Endereco novoEndereco) {
+        // Atualiza em um único lugar
+        // Pedidos e Notas Fiscais referenciam o endereço atualizado
+        clienteRepository.atualizarEndereco(cliente, novoEndereco);
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Extract Class (Extrair Classe)</h3>
+              <p class="refactoring-description">
+                Crie uma nova classe para conter os dados espalhados. Mova todos os campos relacionados.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Move Field (Mover Campo)</h3>
+              <p class="refactoring-description">
+                Mova campos de várias classes para uma classe central que representa o conceito.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Value Object</h3>
+              <p class="refactoring-description">
+                Crie um objeto de valor imutável para representar o conceito unificado.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Reference with Value</h3>
+              <p class="refactoring-description">
+                Se apropriado, substitua referências por valores copiados (snapshot).
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="divergent-change.html" class="nav-btn nav-btn-prev" data-prev="divergent-change.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Mudança Divergente</span>
+          </a>
+          <a href="shotgun-surgery.html" class="nav-btn nav-btn-next" data-next="shotgun-surgery.html">
+            <span>Cirurgia de Escopeta</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

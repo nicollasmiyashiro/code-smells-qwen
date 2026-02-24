@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Muitos Argumentos - Code Smell. Métodos que recebem muitos parâmetros, indicando responsabilidade excessiva.">
+  <title>Muitos Argumentos - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>📦</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">📦</div>
+        <h1 class="smell-detail-title">Muitos Argumentos</h1>
+        <p class="smell-detail-subtitle">Many Arguments / Long Parameter List</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            O code smell <strong>Muitos Argumentos</strong> ocorre quando um método recebe uma quantidade 
+            excessiva de parâmetros. Não existe um número mágico, mas geralmente mais de 3-4 parâmetros 
+            já é um sinal de alerta.
+          </p>
+          <p class="mt-2">
+            Listas longas de parâmetros tornam o código difícil de ler, entender e manter. Além disso, 
+            indicam que o método pode estar fazendo demais ou que os dados deveriam estar encapsulados 
+            em um objeto.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Dificuldade de uso:</strong> Chamar o método requer lembrar a ordem e significado de muitos parâmetros.</li>
+            <li><strong>Acoplamento excessivo:</strong> O método depende de muitos dados externos.</li>
+            <li><strong>Refatoração difícil:</strong> Adicionar um novo parâmetro requer mudar todas as chamadas.</li>
+            <li><strong>Código confuso:</strong> Chamadas com muitos argumentos são difíceis de ler.</li>
+            <li><strong>Violação de encapsulamento:</strong> Dados relacionados não estão agrupados.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Métodos com mais de 4 parâmetros.</li>
+            <li>Parâmetros que sempre aparecem juntos em várias chamadas.</li>
+            <li>Grupos de parâmetros que representam partes de um conceito maior.</li>
+            <li>Parâmetros do mesmo tipo que podem ser confundidos na ordem.</li>
+            <li>Métodos que recebem objetos inteiros mas usam apenas alguns campos.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Muitos Parâmetros</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class CadastroCliente {
+    
+    public void cadastrarCliente(
+        String nome,
+        String sobrenome,
+        String email,
+        String telefone,
+        String cpf,
+        String rua,
+        String numero,
+        String complemento,
+        String bairro,
+        String cidade,
+        String estado,
+        String cep,
+        LocalDate dataNascimento,
+        String sexo,
+        String estadoCivil
+    ) {
+        // Validar dados
+        if (nome == null || nome.isEmpty()) {
+            throw new IllegalArgumentException("Nome obrigatório");
+        }
+        
+        // Criar endereço
+        String enderecoCompleto = rua + ", " + numero;
+        if (complemento != null) {
+            enderecoCompleto += " - " + complemento;
+        }
+        enderecoCompleto += "\n" + bairro;
+        enderecoCompleto += "\n" + cidade + " - " + estado;
+        enderecoCompleto += "\nCEP: " + cep;
+        
+        // Calcular idade
+        int idade = Period.between(dataNascimento, LocalDate.now()).getYears();
+        
+        // Salvar no banco
+        Cliente cliente = new Cliente();
+        cliente.setNome(nome + " " + sobrenome);
+        cliente.setEmail(email);
+        cliente.setTelefone(telefone);
+        cliente.setCpf(cpf);
+        cliente.setEndereco(enderecoCompleto);
+        cliente.setDataNascimento(dataNascimento);
+        cliente.setIdade(idade);
+        cliente.setSexo(sexo);
+        cliente.setEstadoCivil(estadoCivil);
+        
+        repository.salvar(cliente);
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Objetos de Parâmetro</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Classes de valor bem definidas
+public class Endereco {
+    private final String rua;
+    private final String numero;
+    private final String complemento;
+    private final String bairro;
+    private final String cidade;
+    private final String estado;
+    private final String cep;
+    
+    // Construtor, getters e métodos úteis
+    public String getEnderecoCompleto() {
+        StringBuilder sb = new StringBuilder(rua + ", " + numero);
+        if (complemento != null) {
+            sb.append(" - ").append(complemento);
+        }
+        sb.append("\n").append(bairro);
+        sb.append("\n").append(cidade).append(" - ").append(estado);
+        sb.append("\nCEP: ").append(cep);
+        return sb.toString();
+    }
+}
+
+public class DadosPessoais {
+    private final LocalDate dataNascimento;
+    private final String sexo;
+    private final String estadoCivil;
+    
+    public int calcularIdade() {
+        return Period.between(dataNascimento, LocalDate.now()).getYears();
+    }
+}
+
+public class Cliente {
+    private final String nome;
+    private final String email;
+    private final String telefone;
+    private final String cpf;
+    private final Endereco endereco;
+    private final DadosPessoais dadosPessoais;
+    
+    // Construtor, getters
+}
+
+// Método com parâmetros encapsulados
+public class CadastroCliente {
+    
+    public void cadastrarCliente(Cliente cliente) {
+        validarCliente(cliente);
+        repository.salvar(cliente);
+    }
+    
+    private void validarCliente(Cliente cliente) {
+        if (cliente.getNome() == null || cliente.getNome().isEmpty()) {
+            throw new IllegalArgumentException("Nome obrigatório");
+        }
+        if (cliente.getEmail() == null || !cliente.getEmail().contains("@")) {
+            throw new IllegalArgumentException("Email inválido");
+        }
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Introduce Parameter Object (Introduzir Objeto de Parâmetro)</h3>
+              <p class="refactoring-description">
+                Crie uma classe para agrupar parâmetros que estão relacionados. Substitua os parâmetros 
+                individuais pelo novo objeto.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Preserve Whole Object (Preservar Objeto Inteiro)</h3>
+              <p class="refactoring-description">
+                Ao invés de passar valores individuais extraídos de um objeto, passe o objeto inteiro 
+                e extraia os valores dentro do método.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Parameter with Method (Substituir Parâmetro por Método)</h3>
+              <p class="refactoring-description">
+                Se um parâmetro pode ser calculado dentro do método, remova-o e faça o cálculo internamente.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Builder Pattern</h3>
+              <p class="refactoring-description">
+                Para objetos com muitos campos opcionais, use o padrão Builder para construir o objeto 
+                de forma fluente e legível.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📊</span>
+            Diagrama Ilustrativo
+          </h2>
+          <div class="diagram-container">
+            <svg class="diagram-svg" viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+              <!-- Antes -->
+              <text x="150" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#ef4444">ANTES</text>
+              
+              <rect x="50" y="50" width="200" height="100" fill="#ef4444" opacity="0.1" rx="8"/>
+              <rect x="50" y="50" width="200" height="100" stroke="#ef4444" stroke-width="2" fill="none" rx="8"/>
+              
+              <circle cx="80" cy="75" r="8" fill="#ef4444"/>
+              <text x="95" y="80" font-size="10" fill="#666">nome</text>
+              
+              <circle cx="80" cy="95" r="8" fill="#ef4444"/>
+              <text x="95" y="100" font-size="10" fill="#666">email</text>
+              
+              <circle cx="80" cy="115" r="8" fill="#ef4444"/>
+              <text x="95" y="120" font-size="10" fill="#666">telefone</text>
+              
+              <circle cx="80" cy="135" r="8" fill="#ef4444"/>
+              <text x="95" y="140" font-size="10" fill="#666">endereco</text>
+              
+              <text x="150" y="165" text-anchor="middle" font-size="11" fill="#ef4444">método(6+ params)</text>
+              
+              <!-- Seta -->
+              <line x1="260" y1="100" x2="300" y2="100" stroke="#f97316" stroke-width="2" marker-end="url(#arrowhead2)"/>
+              
+              <!-- Depois -->
+              <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#22c55e">DEPOIS</text>
+              
+              <rect x="350" y="50" width="200" height="100" fill="#22c55e" opacity="0.1" rx="8"/>
+              <rect x="350" y="50" width="200" height="100" stroke="#22c55e" stroke-width="2" fill="none" rx="8"/>
+              
+              <rect x="370" y="70" width="160" height="25" fill="#3b82f6" opacity="0.2" rx="4"/>
+              <rect x="370" y="70" width="160" height="25" stroke="#3b82f6" stroke-width="1.5" fill="none" rx="4"/>
+              <text x="450" y="87" text-anchor="middle" font-size="10" fill="#3b82f6">DadosPessoais</text>
+              
+              <rect x="370" y="100" width="160" height="25" fill="#3b82f6" opacity="0.2" rx="4"/>
+              <rect x="370" y="100" width="160" height="25" stroke="#3b82f6" stroke-width="1.5" fill="none" rx="4"/>
+              <text x="450" y="117" text-anchor="middle" font-size="10" fill="#3b82f6">Endereco</text>
+              
+              <text x="450" y="165" text-anchor="middle" font-size="11" fill="#22c55e">método(Cliente)</text>
+              
+              <defs>
+                <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+                </marker>
+              </defs>
+            </svg>
+            <p class="mt-2" style="color: var(--text-secondary); font-size: var(--text-sm);">
+                Parâmetros relacionados são agrupados em objetos coesos
+            </p>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="long-function.html" class="nav-btn nav-btn-prev" data-prev="long-function.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Funções Longas</span>
+          </a>
+          <a href="switch-statements.html" class="nav-btn nav-btn-next" data-next="switch-statements.html">
+            <span>Switch Statements</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

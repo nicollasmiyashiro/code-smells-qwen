@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Switch Statements - Code Smell. Uso excessivo de switch/if-else baseado em tipos, violando Open/Closed Principle.">
+  <title>Switch Statements - Code Smells</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231e3a8a' rx='20' width='100' height='100'/><text y='.9em' x='50%' text-anchor='middle' font-size='70'>🔀</text></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <a href="../index.html" class="logo">
+          <div class="logo-icon">👃</div>
+          <span>Code Smells</span>
+        </a>
+        
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="../index.html" class="nav-link">Início</a></li>
+            <li><a href="../index.html#smells" class="nav-link">Smells</a></li>
+            <li><a href="https://refactoring.guru" target="_blank" class="nav-link">Referência</a></li>
+          </ul>
+          
+          <button class="theme-toggle" aria-label="Alternar tema escuro/claro">
+            <span class="theme-toggle-icon sun">☀️</span>
+            <span class="theme-toggle-icon moon">🌙</span>
+          </button>
+        </nav>
+        
+        <button class="menu-toggle" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="smell-detail">
+    <div class="container container-narrow">
+      <nav class="breadcrumb"></nav>
+      
+      <header class="smell-detail-header">
+        <div class="smell-detail-icon">🔀</div>
+        <h1 class="smell-detail-title">Switch Statements</h1>
+        <p class="smell-detail-subtitle">Switch Statements / Conditional Complexity</p>
+      </header>
+
+      <div class="smell-detail-content">
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📖</span>
+            Definição
+          </h2>
+          <p>
+            O code smell <strong>Switch Statements</strong> refere-se ao uso excessivo de instruções 
+            <code>switch</code> ou cadeias longas de <code>if-else</code> baseadas em tipos, enums ou 
+            valores específicos.
+          </p>
+          <p class="mt-2">
+            Este padrão viola o <strong>Princípio Aberto/Fechado (OCP)</strong>: classes devem estar 
+            abertas para extensão mas fechadas para modificação. Cada novo tipo requer modificar o switch.
+          </p>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">⚠️</span>
+            Problemas Causados
+          </h2>
+          <ul class="detail-list">
+            <li><strong>Violação do OCP:</strong> Adicionar novo tipo requer modificar código existente.</li>
+            <li><strong>Código duplicado:</strong> Switches similares aparecem em múltiplos lugares.</li>
+            <li><strong>Complexidade ciclomática alta:</strong> Muitos caminhos de execução para testar.</li>
+            <li><strong>Difícil manutenção:</strong> Mudanças exigem encontrar todos os switches relacionados.</li>
+            <li><strong>Polimorfismo ignorado:</strong> Perde-se os benefícios da orientação a objetos.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔍</span>
+            Como Identificar
+          </h2>
+          <ul class="detail-list">
+            <li>Switch baseado em tipo de objeto (instanceof + cast).</li>
+            <li>Switch sobre enum com muitos casos.</li>
+            <li>Cadeias longas de if-else if verificando tipos ou valores.</li>
+            <li>O mesmo switch aparece em múltiplas classes.</li>
+            <li>Casos do switch contêm lógica complexa que poderia ser um método próprio.</li>
+          </ul>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">❌</span>
+            Código RUIM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label bad">❌ Java - Switch por Tipo</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">public class CalculadoraImposto {
+    
+    public double calcularImposto(Object produto, double valor) {
+        if (produto instanceof Livro) {
+            Livro livro = (Livro) produto;
+            // Livros têm isenção parcial
+            if (livro.isEducacional()) {
+                return valor * 0.0;
+            }
+            return valor * 0.07;
+        } else if (produto instanceof Alimentacao) {
+            Alimentacao alimento = (Alimentacao) produto;
+            // Alimentos têm alíquota reduzida
+            if (alimento.isBasico()) {
+                return valor * 0.04;
+            }
+            return valor * 0.12;
+        } else if (produto instanceof Eletronico) {
+            Eletronico eletronico = (Eletronico) produto;
+            // Eletrônicos têm imposto alto + taxa
+            double imposto = valor * 0.25;
+            if (eletronico.isImportado()) {
+                imposto += valor * 0.15;
+            }
+            return imposto;
+        } else if (produto instanceof Vestuario) {
+            // Vestuário varia por estado
+            String estado = produto.getEstado();
+            switch (estado) {
+                case "SP": return valor * 0.18;
+                case "RJ": return valor * 0.20;
+                default: return valor * 0.22;
+            }
+        } else if (produto instanceof Servico) {
+            return valor * 0.05;
+        } else {
+            // Padrão
+            return valor * 0.18;
+        }
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">✅</span>
+            Código BOM
+          </h2>
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-label good">✅ Java - Polimorfismo</span>
+              <button class="code-copy-btn">Copiar</button>
+            </div>
+            <pre><code class="language-java">// Interface comum
+public interface Tributavel {
+    double calcularImposto(double valor);
+}
+
+// Implementações específicas
+public class Livro implements Tributavel {
+    private boolean educacional;
+    
+    @Override
+    public double calcularImposto(double valor) {
+        if (educacional) {
+            return 0.0;
+        }
+        return valor * 0.07;
+    }
+}
+
+public class Alimentacao implements Tributavel {
+    private boolean basico;
+    
+    @Override
+    public double calcularImposto(double valor) {
+        if (basico) {
+            return valor * 0.04;
+        }
+        return valor * 0.12;
+    }
+}
+
+public class Eletronico implements Tributavel {
+    private boolean importado;
+    
+    @Override
+    public double calcularImposto(double valor) {
+        double imposto = valor * 0.25;
+        if (importado) {
+            imposto += valor * 0.15;
+        }
+        return imposto;
+    }
+}
+
+public class Vestuario implements Tributavel {
+    private String estado;
+    
+    @Override
+    public double calcularImposto(double valor) {
+        return switch (estado) {
+            case "SP" -> valor * 0.18;
+            case "RJ" -> valor * 0.20;
+            default -> valor * 0.22;
+        };
+    }
+}
+
+// Uso limpo e extensível
+public class CalculadoraImposto {
+    
+    public double calcularImposto(Tributavel produto, double valor) {
+        return produto.calcularImposto(valor);
+    }
+}</code></pre>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">🔧</span>
+            Técnicas de Refatoração
+          </h2>
+          <div class="refactoring-list">
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Conditional with Polymorphism</h3>
+              <p class="refactoring-description">
+                Substitua condicionais baseadas em tipo por polimorfismo. Crie uma interface/classe 
+                base e implemente o comportamento em subclasses.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Type Code with State/Strategy</h3>
+              <p class="refactoring-description">
+                Substitua códigos de tipo por objetos de estado ou estratégia. Permite mudar 
+                comportamento em tempo de execução.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Replace Type Code with Subclasses</h3>
+              <p class="refactoring-description">
+                Crie subclasses para cada tipo de código. O comportamento específico vai para 
+                cada subclasse.
+              </p>
+            </div>
+            
+            <div class="refactoring-card">
+              <h3 class="refactoring-name">Command Pattern</h3>
+              <p class="refactoring-description">
+                Para casos complexos, encapsule cada operação como um objeto Command. Permite 
+                adicionar novos comandos sem modificar código existente.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <h2 class="section-title">
+            <span class="section-title-icon">📊</span>
+            Diagrama Ilustrativo
+          </h2>
+          <div class="diagram-container">
+            <svg class="diagram-svg" viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg">
+              <!-- Antes -->
+              <text x="150" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#ef4444">ANTES</text>
+              
+              <rect x="50" y="50" width="200" height="140" fill="#ef4444" opacity="0.1" rx="8"/>
+              <rect x="50" y="50" width="200" height="140" stroke="#ef4444" stroke-width="2" fill="none" rx="8"/>
+              <text x="150" y="75" text-anchor="middle" font-size="12" font-weight="bold" fill="#ef4444">CalculadoraImposto</text>
+              
+              <text x="70" y="100" font-size="10" fill="#666">switch (tipo) {</text>
+              <text x="80" y="115" font-size="9" fill="#888">case LIVRO: ...</text>
+              <text x="80" y="128" font-size="9" fill="#888">case ALIMENTO: ...</text>
+              <text x="80" y="141" font-size="9" fill="#888">case ELETRONICO: ...</text>
+              <text x="80" y="154" font-size="9" fill="#888">case VESTUARIO: ...</text>
+              <text x="80" y="167" font-size="9" fill="#888">default: ...</text>
+              <text x="70" y="180" font-size="10" fill="#666">}</text>
+              
+              <!-- Seta -->
+              <line x1="260" y1="120" x2="300" y2="120" stroke="#f97316" stroke-width="2" marker-end="url(#arrowhead3)"/>
+              
+              <!-- Depois -->
+              <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#22c55e">DEPOIS</text>
+              
+              <rect x="330" y="50" width="80" height="40" fill="#8b5cf6" opacity="0.2" rx="6"/>
+              <rect x="330" y="50" width="80" height="40" stroke="#8b5cf6" stroke-width="2" fill="none" rx="6"/>
+              <text x="370" y="75" text-anchor="middle" font-size="9" fill="#8b5cf6">Tributavel</text>
+              
+              <line x1="370" y1="90" x2="370" y2="110" stroke="#8b5cf6" stroke-width="1.5"/>
+              <line x1="370" y1="110" x2="330" y2="120" stroke="#8b5cf6" stroke-width="1.5"/>
+              <line x1="370" y1="110" x2="390" y2="120" stroke="#8b5cf6" stroke-width="1.5"/>
+              <line x1="370" y1="110" x2="450" y2="120" stroke="#8b5cf6" stroke-width="1.5"/>
+              
+              <rect x="310" y="120" width="60" height="30" fill="#22c55e" opacity="0.2" rx="4"/>
+              <rect x="310" y="120" width="60" height="30" stroke="#22c55e" stroke-width="1.5" fill="none" rx="4"/>
+              <text x="340" y="140" text-anchor="middle" font-size="8" fill="#22c55e">Livro</text>
+              
+              <rect x="370" y="120" width="60" height="30" fill="#22c55e" opacity="0.2" rx="4"/>
+              <rect x="370" y="120" width="60" height="30" stroke="#22c55e" stroke-width="1.5" fill="none" rx="4"/>
+              <text x="400" y="140" text-anchor="middle" font-size="8" fill="#22c55e">Alimento</text>
+              
+              <rect x="430" y="120" width="60" height="30" fill="#22c55e" opacity="0.2" rx="4"/>
+              <rect x="430" y="120" width="60" height="30" stroke="#22c55e" stroke-width="1.5" fill="none" rx="4"/>
+              <text x="460" y="140" text-anchor="middle" font-size="8" fill="#22c55e">Eletronico</text>
+              
+              <rect x="370" y="160" width="80" height="35" fill="#3b82f6" opacity="0.2" rx="6"/>
+              <rect x="370" y="160" width="80" height="35" stroke="#3b82f6" stroke-width="2" fill="none" rx="6"/>
+              <text x="410" y="180" text-anchor="middle" font-size="10" fill="#3b82f6">calcular()</text>
+              <text x="410" y="195" text-anchor="middle" font-size="10" fill="#3b82f6">→ polimórfico</text>
+              
+              <defs>
+                <marker id="arrowhead3" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+                </marker>
+              </defs>
+            </svg>
+            <p class="mt-2" style="color: var(--text-secondary); font-size: var(--text-sm);">
+                Switch condicional substituído por polimorfismo e herança
+            </p>
+          </div>
+        </section>
+
+        <nav class="detail-navigation">
+          <a href="many-arguments.html" class="nav-btn nav-btn-prev" data-prev="many-arguments.html">
+            <span class="nav-btn-icon">←</span>
+            <span>Muitos Argumentos</span>
+          </a>
+          <a href="data-clumps.html" class="nav-btn nav-btn-next" data-next="data-clumps.html">
+            <span>Data Clumps</span>
+            <span class="nav-btn-icon">→</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 Code Smells Guide. Baseado em <a href="https://refactoring.guru" target="_blank">refactoring.guru</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="scroll-top" aria-label="Voltar ao topo">↑</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>
