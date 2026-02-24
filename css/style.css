@@ -736,6 +736,35 @@ code, pre {
 .smell-detail-content {
   max-width: 900px;
   margin: 0 auto;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .smell-detail-content {
+  color: #FFFFFF;
+}
+
+/* Garante que TODO conteúdo dentro de smell-detail tenha cor correta */
+.smell-detail * {
+  color: #0f172a;
+}
+
+[data-theme="dark"] .smell-detail * {
+  color: #FFFFFF;
+}
+
+/* Exceto elementos que devem manter cor específica */
+.smell-detail a,
+.smell-detail .token,
+.smell-detail code,
+.smell-detail pre {
+  color: inherit;
+}
+
+[data-theme="dark"] .smell-detail a,
+[data-theme="dark"] .smell-detail .token,
+[data-theme="dark"] .smell-detail code,
+[data-theme="dark"] .smell-detail pre {
+  color: inherit;
 }
 
 /* Sections */
@@ -746,19 +775,46 @@ code, pre {
   padding: 2rem;
   margin-bottom: 2rem;
   transition: border-color var(--transition-normal);
+  color: #0f172a;
+}
+
+[data-theme="dark"] .detail-section {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #FFFFFF;
 }
 
 .detail-section:hover {
   border-color: var(--primary-blue);
 }
 
-[data-theme="dark"] .detail-section {
-  background-color: #1e293b;
-  border-color: #334155;
-}
-
 [data-theme="dark"] .detail-section:hover {
   border-color: var(--secondary-orange);
+}
+
+/* Garante texto legível dentro das seções */
+.detail-section p,
+.detail-section h2,
+.detail-section h3,
+.detail-section ul,
+.detail-section ol,
+.detail-section li,
+.detail-section strong,
+.detail-section em,
+.detail-section code {
+  color: #0f172a !important;
+}
+
+[data-theme="dark"] .detail-section p,
+[data-theme="dark"] .detail-section h2,
+[data-theme="dark"] .detail-section h3,
+[data-theme="dark"] .detail-section ul,
+[data-theme="dark"] .detail-section ol,
+[data-theme="dark"] .detail-section li,
+[data-theme="dark"] .detail-section strong,
+[data-theme="dark"] .detail-section em,
+[data-theme="dark"] .detail-section code {
+  color: #FFFFFF !important;
 }
 
 .section-title {
@@ -883,10 +939,14 @@ code, pre {
 .code-block {
   margin: 0;
   padding: 1.5rem;
-  background-color: var(--bg-code);
+  background-color: #1e293b;
   overflow-x: auto;
   font-size: var(--text-sm);
   line-height: 1.6;
+}
+
+[data-theme="dark"] .code-block {
+  background-color: #0f172a;
 }
 
 .code-block pre {
