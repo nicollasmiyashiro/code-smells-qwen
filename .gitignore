@@ -36,3 +36,7 @@ ehthumbs.db
 *.class
 *.pyc
 __pycache__/
+
+# Imagens
+image.png
+*.png
